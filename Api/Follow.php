@@ -8,10 +8,12 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
+use Guzzle\Http\Client;
+
 /**
  * SEO Follow given keywords
  */
-class Follow extends Client
+class Follow
 {
     /**
      * @var Client
