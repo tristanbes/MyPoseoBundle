@@ -1,0 +1,30 @@
+{
+    "name": "tristanbes/my-poseo-bundle",
+    "description": "Access to MyPoseo API",
+    "keywords": ["seo", "myposeo", "google", "rank"],
+    "homepage": "https://github.com/tristanbes/MyPoseoBundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tristan Bessoussa",
+            "email": "yuhu@mmoreram.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/config": ">=2.1",
+        "symfony/http-kernel": ">=2.1",
+        "symfony/dependency-injection": ">=2.1",
+        "misd/guzzle-bundle": "1.1.*@dev"
+    },
+    "autoload": {
+        "psr-4": { "Tristanbes\\MyPoseoBundle\\": "" }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
