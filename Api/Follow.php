@@ -35,9 +35,10 @@ class Follow
      */
     public function getSite()
     {
-        $response = $this->client->get('site');
+        $request = $this->client->get('site',['debug' => true]);
+        $response = $this->client->send($request);
 
-        return $response->json();
+        return $response;
     }
 
     /**
@@ -59,7 +60,7 @@ class Follow
         $query->set('group', $group);
         $body->set('sites', $sites);
 
-        $response = $client->send($request);
+        $response = $this->client->send($request);
 
         return $response->json();
     }

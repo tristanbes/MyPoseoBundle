@@ -10,7 +10,7 @@
     </parameters>
 
     <services>
-        <service id="my_poseo" class="%my_poseo.follow.class%">
+        <service id="my_poseo.follow" class="%my_poseo.follow.class%">
             <argument type="service" id="my_poseo.guzzle.client"/>
         </service>
 
@@ -20,6 +20,12 @@
             <argument type="collection">
                 <argument key="version">%my_poseo.api.version%</argument>
             </argument>
+            <call method="setDefaultOption">
+                <argument>query</argument>
+                <argument type="collection">
+                    <argument key="key">%my_poseo.api.key%</argument>
+                </argument>
+            </call>
         </service>
 
     </services>
