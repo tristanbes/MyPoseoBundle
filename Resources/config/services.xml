@@ -5,12 +5,13 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="my_poseo.client.class">Guzzle\Service\Client</parameter>
+        <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
+        <parameter key="my_poseo.follow.class">Tristanbes\MyPoseoBundle\Api\Follow</parameter>
     </parameters>
 
     <services>
-        <service id="my_poseo" class="%my_poseo.client.class%">
-            <argument type="service" id="guzzle.client"/>
+        <service id="my_poseo" class="%my_poseo.follow.class%">
+            <argument type="service" id="my_poseo.guzzle.client"/>
         </service>
 
         <service id="my_poseo.guzzle.client" class="%guzzle.client.class%">

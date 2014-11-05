@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $treeBuilder->root('my_poseo');
+        $rootNode = $treeBuilder->root('my_poseo');
 
         $rootNode
             ->children()
@@ -46,7 +46,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->booleanNode('cache')->defaultTrue()->end()
                         ->scalarNode('cache_ttl')
-                            ->isRequired()
                         ->end()
                     ->end()
                 ->end()

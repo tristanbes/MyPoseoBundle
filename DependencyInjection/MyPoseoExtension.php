@@ -26,12 +26,12 @@ class MyPoseoExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('my_poseo.api.version', $config['my_poseo']['api']['version']);
-        $container->setParameter('my_poseo.api.base_url', $config['my_poseo']['api']['base_url']);
-        $container->setParameter('my_poseo.api.key', $config['my_poseo']['api']['key']);
+        $container->setParameter('my_poseo.api.version', $config['api']['version']);
+        $container->setParameter('my_poseo.api.base_url', $config['api']['base_url']);
+        $container->setParameter('my_poseo.api.key', $config['api']['key']);
     }
 }
