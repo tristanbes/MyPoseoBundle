@@ -30,8 +30,8 @@ class MyPoseoExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('my_poseo.api.version', $config['my_poseo']['api']['api_key']);
+        $container->setParameter('my_poseo.api.version', $config['my_poseo']['api']['version']);
         $container->setParameter('my_poseo.api.base_url', $config['my_poseo']['api']['base_url']);
-        $container->setParameter('my_poseo.api.key', $config['my_poseo']['api']['base_url']);
+        $container->setParameter('my_poseo.api.key', $config['my_poseo']['api']['key']);
     }
 }
