@@ -33,7 +33,7 @@ class Follow
      *
      * @return array
      */
-    public function getSite()
+    public function getSites()
     {
         $request = $this->client->get('site',['debug' => true]);
         $response = $this->client->send($request);
@@ -44,9 +44,11 @@ class Follow
     /**
      * Add one or several sites
      *
-     * @param array  $sites Array of urls you want to add
-     * @param string $label Label of the site
-     * @param id     $group Group id
+     * @param array   $sites Array of urls you want to add
+     * @param string  $label Label of the site
+     * @param integer $group Group id
+     *
+     * @return array
      */
     public function addSites(array $sites, $label, $group)
     {
@@ -63,5 +65,20 @@ class Follow
         $response = $this->client->send($request);
 
         return $response->json();
+    }
+
+    /**
+     * Retrurns a site
+     *
+     * @param integer $id Site id
+     *
+     * @return array
+     */
+    public function getSite($id)
+    {
+        $request = $this->client->get(sprintf('site/%d', $id));
+        $response = $this->client->send($request);
+
+        return $response;
     }
 }
