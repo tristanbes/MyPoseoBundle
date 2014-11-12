@@ -46,7 +46,7 @@ class Follow
             return new \LogicException($data['msg']);
         }
 
-        return $data['data'];
+        return (isset($data['data']) ? $data['data'] : $data['msg']);
     }
 
     /**
@@ -170,21 +170,27 @@ class Follow
      *
      * @param int   $id           The site's id
      * @param int   $keywordGroup ID keywords group
+     * @param array $keywords     Array of keywords
      * @param int   $searchEngine ID search engine
-     * @param int   $idLocation   ID device. (0 => desktop, 1 => Mobile)
-     * @param array $idDevice     Keywords list
+     * @param int   $idLocation   ID of the search engine location. Id of country listed there :
+     *                            http://api.myposeo.com/m/apiv2/tool/json?key=YOUR_API_KEY&method=getLocations&searchEngine=google
+     * @param int   $idDevice     Keywords list(0 = desktop, 1 = Mobile)
      *
      * @return array
      */
-    public function addKeywords($id, $keywordGroup, $searchEngine = 2, $idLocation = 13, $idDevice = 0)
+    public function addKeywords($id, $keywordGroup, $keywords, $searchEngine = 2, $idLocation = 13, $idDevice = 0)
     {
         $request = $this->client->createRequest('POST', 'keyword');
         $body    = $request->getBody();
 
-        $body->set('site', $id);
-        $body->set('keywordsGroup', $keywordGroup);
-        $body->set('keywordsSetups[0][id_engine]', $searchEngine);
-        $body->set('sites', $sites);
+        $request->addPostFields([
+            'site'                           => $id,
+            'keywords[]'                     => $keywords,
+            'keywordsGroup'                  => $keywordGroup,
+            'keywordsSetups[0][id_engine]'   => $searchEngine,
+            'keywordsSetups[0][id_device]'   => $idDevice,
+            'keywordsSetups[0][id_location]' => $idLocation
+        ]);
 
         $response = $this->client->send($request);
 
