@@ -101,8 +101,9 @@ class Follow
         $body->set('sites', $sites);
 
         $response = $this->client->send($request);
+        $data     = $this->processResponse($response);
 
-        return $response->json();
+        return $data;
     }
 
     /**
@@ -121,8 +122,7 @@ class Follow
         $query->set('comment', $id);
 
         $response = $this->client->send($request);
-
-        $data = $this->processResponse($response);
+        $data     = $this->processResponse($response);
 
         return $data;
     }
@@ -159,8 +159,7 @@ class Follow
         $query->set('keyword', $id);
 
         $response = $this->client->send($request);
-
-        $data = $this->processResponse($response);
+        $data     = $this->processResponse($response);
 
         return $data;
     }
@@ -181,7 +180,6 @@ class Follow
     public function addKeywords($id, $keywordGroup, $keywords, $searchEngine = 2, $idLocation = 13, $idDevice = 0)
     {
         $request = $this->client->createRequest('POST', 'keyword');
-        $body    = $request->getBody();
 
         $request->addPostFields([
             'site'                           => $id,
@@ -193,8 +191,42 @@ class Follow
         ]);
 
         $response = $this->client->send($request);
+        $data     = $this->processResponse($response);
 
-        $data = $this->processResponse($response);
+        return $data;
+    }
+
+    /**
+     * Returns rank for site'keywords
+     *
+     * @param int    $id           The site's ID
+     * @param string $date         The date (format YYYY-MM-DD)
+     * @param string $dateCompare  The compared date
+     * @param stirng $type         Gives the position of competitors if set to "competitors"
+     *
+     * @return array
+     */
+    public function getRank($id, $date = null, $dateCompare = null, $type = null)
+    {
+        $request = $this->client->createRequest('GET', 'ranking');
+        $query   = $request->getQuery();
+
+        $query->set('site', $id);
+
+        if ($date) {
+            $query->set('date', $date);
+        }
+
+        if ($dateCompare) {
+            $query->set('dateCompare', $dateCompare);
+        }
+
+        if ($type) {
+            $query->set('type', $type);
+        }
+
+        $response = $this->client->send($request);
+        $data     = $this->processResponse($response);
 
         return $data;
     }
