@@ -23,7 +23,7 @@
             <call method="setDefaultOption">
                 <argument>query</argument>
                 <argument type="collection">
-                    <argument key="key">%my_poseo.api.search.key%</argument>
+                    <argument key="key">%my_poseo.api.key%</argument>
                 </argument>
             </call>
         </service>

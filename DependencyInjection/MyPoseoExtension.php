@@ -34,7 +34,7 @@ class MyPoseoExtension extends Extension
 
             $container->setParameter('my_poseo.api.main.version', $config['api']['type']['main']['version']);
             $container->setParameter('my_poseo.api.main.base_url', $config['api']['type']['main']['base_url']);
-            $container->setParameter('my_poseo.api.main.key', $config['api']['type']['main']['key']);
+            $container->setParameter('my_poseo.api.key', $config['api']['key']);
         }
 
         if (isset($config['api']['type']['search'])) {
@@ -43,7 +43,7 @@ class MyPoseoExtension extends Extension
 
             $container->setParameter('my_poseo.api.search.version', $config['api']['type']['search']['version']);
             $container->setParameter('my_poseo.api.search.base_url', $config['api']['type']['search']['base_url']);
-            $container->setParameter('my_poseo.api.search.key', $config['api']['type']['search']['key']);
+            $container->setParameter('my_poseo.api.key', $config['api']['key']);
         }
     }
 }

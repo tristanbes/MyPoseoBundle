@@ -23,25 +23,7 @@
             <call method="setDefaultOption">
                 <argument>query</argument>
                 <argument type="collection">
-                    <argument key="key">%my_poseo.api.main.key%</argument>
-                </argument>
-            </call>
-        </service>
-
-        <service id="my_poseo.follow" class="%my_poseo.follow.class%">
-            <argument type="service" id="my_poseo.main.guzzle.client"/>
-        </service>
-
-        <service id="my_poseo.search.guzzle.client" class="%guzzle.client.class%">
-            <tag name="guzzle.client"/>
-            <argument>%my_poseo.api.search.base_url%</argument>
-            <argument type="collection">
-                <argument key="version">%my_poseo.api.search.version%</argument>
-            </argument>
-            <call method="setDefaultOption">
-                <argument>query</argument>
-                <argument type="collection">
-                    <argument key="key">%my_poseo.api.search.key%</argument>
+                    <argument key="key">%my_poseo.api.key%</argument>
                 </argument>
             </call>
         </service>
