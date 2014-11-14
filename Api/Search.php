@@ -34,19 +34,13 @@ class Search
      *
      * @param Response $response The guzzle response
      *
-     * @throws \LogicException
-     *
      * @return array
      */
     public function processResponse(Response $response)
     {
         $data = $response->json();
 
-        if ($data['state'] != 1) {
-            return new \LogicException($data['msg']);
-        }
-
-        return (isset($data['data']) ? $data['data'] : $data['msg']);
+        return $data;
     }
 
     /**
@@ -58,10 +52,8 @@ class Search
      */
     public function getSearchEngineExtensions($searchEngine)
     {
-        $request  = $this->client->createRequest('GET', '/tool/json');
-
+        $request = $this->client->createRequest('GET', 'tool/json');
         $query   = $request->getQuery();
-        $body    = $request->getBody();
 
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
@@ -82,10 +74,8 @@ class Search
      */
     public function getTownCode($name, $country = 'FR')
     {
-        $request  = $this->client->createRequest('GET', '/tool/json');
-
+        $request = $this->client->createRequest('GET', 'tool/json');
         $query   = $request->getQuery();
-        $body    = $request->getBody();
 
         $query->set('method', 'getGeoloc');
         $query->set('country', $country);
