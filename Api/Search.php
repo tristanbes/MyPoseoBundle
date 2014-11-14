@@ -87,8 +87,29 @@ class Search
         return $data;
     }
 
-    public function getUrlRankByKeyword()
+    public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $cityId = null, $location = 13, $maxPage = null, $preferences = null)
     {
+        $request = $this->client->createRequest('GET', 'tool/json');
+        $query   = $request->getQuery();
+
+        $query->set('method', 'analyzeSerpSeo');
+        $query->set('keyword', $keyword);
+        $query->set('url', $url);
+        $query->set('searchEngine', $searchEngine);
+        $query->set('location', $location);
+
+        if ($cityId) {
+            $query->set('country', $country);
+        }
+
+        if ($maxPage) {
+            $query->set('maxPage', $maxPage);
+        }
+
+        $response = $this->client->send($request);
+        $data     = $this->processResponse($response);
+
+        return $data;
     }
 
     public function getNaturalSeoResult()
