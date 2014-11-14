@@ -6,30 +6,12 @@
 
     <parameters>
         <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
-        <parameter key="my_poseo.follow.class">Tristanbes\MyPoseoBundle\Api\Follow</parameter>
+        <parameter key="my_poseo.search.class">Tristanbes\MyPoseoBundle\Api\Search</parameter>
     </parameters>
 
     <services>
-        <service id="my_poseo.follow" class="%my_poseo.follow.class%">
-            <argument type="service" id="my_poseo.main.guzzle.client"/>
-        </service>
-
-        <service id="my_poseo.main.guzzle.client" class="%guzzle.client.class%">
-            <tag name="guzzle.client"/>
-            <argument>%my_poseo.api.main.base_url%</argument>
-            <argument type="collection">
-                <argument key="version">%my_poseo.api.main.version%</argument>
-            </argument>
-            <call method="setDefaultOption">
-                <argument>query</argument>
-                <argument type="collection">
-                    <argument key="key">%my_poseo.api.main.key%</argument>
-                </argument>
-            </call>
-        </service>
-
-        <service id="my_poseo.follow" class="%my_poseo.follow.class%">
-            <argument type="service" id="my_poseo.main.guzzle.client"/>
+        <service id="my_poseo.search" class="%my_poseo.search.class%">
+            <argument type="service" id="my_poseo.search.guzzle.client"/>
         </service>
 
         <service id="my_poseo.search.guzzle.client" class="%guzzle.client.class%">
