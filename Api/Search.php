@@ -96,7 +96,7 @@ class Search
         $request = $this->client->createRequest('GET', 'tool/json');
         $query   = $request->getQuery();
 
-        $query->set('method', 'analyzeSerpSeo');
+        $query->set('method', 'getPosition');
         $query->set('keyword', $keyword);
         $query->set('url', $url);
         $query->set('searchEngine', $searchEngine);
