@@ -40,7 +40,7 @@ class Search
     {
         $data = $response->json();
 
-        if (isset($data['status'])) {
+        if (isset($data['status']) && $data['status'] != "success") {
             throw new \Exception('MyPoseo API: '.$data['message']);
         }
 
