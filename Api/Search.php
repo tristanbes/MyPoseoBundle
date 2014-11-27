@@ -91,7 +91,20 @@ class Search
         return $data;
     }
 
-    public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $cityId = null, $location = 13, $maxPage = null, $preferences = null)
+    /**
+     * Retrieves the url position given a keyword
+     *
+     * @param string  $keyword
+     * @param string  $url
+     * @param string  $searchEngine
+     * @param string  $callback
+     * @param integer $geolocId
+     * @param integer $location
+     * @param integer $maxPage
+     *
+     * @return array
+     */
+    public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
     {
         $request = $this->client->createRequest('GET', 'tool/json');
         $query   = $request->getQuery();
@@ -106,8 +119,8 @@ class Search
             $query->set('callback', $callback);
         }
 
-        if ($cityId) {
-            $query->set('country', $country);
+        if ($geolocId) {
+            $query->set('geolocId', $geolocId);
         }
 
         if ($maxPage) {
