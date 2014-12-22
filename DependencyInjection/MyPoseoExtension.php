@@ -8,10 +8,10 @@
 
 namespace Tristanbes\MyPoseoBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -39,7 +39,6 @@ class MyPoseoExtension extends Extension
 
         if (isset($config['api']['type']['search'])) {
             $loader->load('search.xml');
-
 
             $container->setParameter('my_poseo.api.search.version', $config['api']['type']['search']['version']);
             $container->setParameter('my_poseo.api.search.base_url', $config['api']['type']['search']['base_url']);

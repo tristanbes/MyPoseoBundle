@@ -34,6 +34,8 @@ class Search
      *
      * @param Response $response The guzzle response
      *
+     * @throws \Exception
+     *
      * @return array
      */
     public function processResponse(Response $response)
