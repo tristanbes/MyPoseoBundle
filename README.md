@@ -35,9 +35,7 @@ public function registerBundles()
 
 How to use it:
 --------------
-
-
-
+You can configure the bundle with:
 
 ``` yml
 my_poseo:
@@ -52,54 +50,6 @@ my_poseo:
                 version: "apiv2"
 ```
 
-            For example, if you just need simple keys you could do with the following configuration:
+Your API key can be found on [this page](http://account.myposeo.com/account/configuration/api).
 
-            ``` yml
-            elao_form_translation:
-            blocks:
-            root:      false
-            children:  false
-            separator: "_"
-            ```
-            Which would generate that kind of keys:
-
-            # (parent_field_name)[separator](field_name)[separator][key]
-            register_name_label
-
-            #### Default configuration:
-
-            ``` yml
-            elao_form_translation:
-
-            # Can be disabled
-            enabled: true
-
-            # Generate translation keys for all missing labels
-            auto_generate: false
-
-            # Customize available keys
-            keys:
-            form:
-            label:  "label"
-            help:   "help"
-            # Add yours ...
-            collection:
-            label_add:      "label_add"
-            label_delete:   "label_delete"
-            # Add yours ...
-
-            # Customize the ways keys are built
-            blocks:
-
-            # Prefix for prototype nodes
-            prototype:  "prototype"
-
-            # Prefix for children nodes
-            children:   "children"
-
-            # Prefix at the root of the key
-            root:       "form"
-
-            # Separator te be used between nodes
-            separator:  "."
-            ```
+**Be careful, the given API key is already url encoded !** You need to decode it since guzzle re-encode automatically all parameters
