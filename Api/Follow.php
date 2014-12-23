@@ -119,7 +119,7 @@ class Follow
         $request = $this->client->createRequest('PUT', 'site/'.$id);
         $query   = $request->getQuery();
 
-        $query->set('comment', $id);
+        $query->set('comment', $comment);
 
         $response = $this->client->send($request);
         $data     = $this->processResponse($response);
