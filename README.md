@@ -1,6 +1,8 @@
 MyPoseoBundle
 =========================
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/0306c6a7-d7c4-4614-ae25-092137c8e4f7/small.png)](https://insight.sensiolabs.com/projects/0306c6a7-d7c4-4614-ae25-092137c8e4f7)
+
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tristanbes/MyPoseoBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tristanbes/MyPoseoBundle/?branch=master)
 
 Description:
