@@ -62,7 +62,7 @@ class SearchMock implements SearchInterface
     {
     }
 
-    public function doRequest(Request $request, $cacheName = null, $ttl = null)
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
     {
     }
 

@@ -46,6 +46,6 @@ class MyPoseoExtension extends Extension
         }
 
         $container->setParameter('my_poseo.api.search_class', $config['api']['search_class']);
-        $container->setParameter('my_poseo.api.cache_class', $config['api']['cache_class']);
+        $container->setParameter('my_poseo.api.cache_service_id', $config['api']['cache_service_id']);
     }
 }

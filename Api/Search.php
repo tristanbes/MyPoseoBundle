@@ -13,6 +13,7 @@ use Guzzle\Http\Client;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
+
 use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 
 /**
@@ -34,7 +35,7 @@ class Search implements SearchInterface
      * @param Client $client The guzzle client
      * @param Cache  $cache  The Doctrine Cache interface
      */
-    public function __construct(Client $client, Cache $cache)
+    public function __construct(Client $client, Cache $cache = null)
     {
         $this->client = $client;
         $this->cache  = $cache;
@@ -44,24 +45,23 @@ class Search implements SearchInterface
      * Process the API request
      *
      * @param Request $request The guzzle request
-     * @param string  $cacheName
+     * @param string  $cacheKey
      * @param integer $ttl
      *
      * @throws NotEnoughCreditsException
      *
      * @return Response
      */
-    public function doRequest(Request $request, $cacheName = null, $ttl = null)
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
     {
         try {
-            if ($cacheName && $ttl) {
-                if ($this->cache->contains($cacheName)) {
-
-                    return $this->cache->fetch($cacheName);
+            if ($cacheKey && $ttl && $this->cache) {
+                if ($this->cache->contains($cacheKey)) {
+                    return $this->cache->fetch($cacheKey);
                 } else {
                     $response = $this->client->send($request);
                     $data     = $this->processResponse($response);
-                    $this->cache->save($cacheName, $data, $ttl);
+                    $this->cache->save($cacheKey, $data, $ttl);
 
                     return $data;
                 }
@@ -108,14 +108,14 @@ class Search implements SearchInterface
      */
     public function getSearchEngineExtensions($searchEngine)
     {
-        $cacheName = $searchEngine . '_locations';
-        $request   = $this->client->createRequest('GET', 'tool/json');
-        $query     = $request->getQuery();
+        $cacheKey = $searchEngine . '_locations';
+        $request  = $this->client->createRequest('GET', 'tool/json');
+        $query    = $request->getQuery();
 
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
 
-        $data = $this->doRequest($request, $cacheName, 1209600);
+        $data = $this->doRequest($request, $cacheKey, 1209600);
 
         return $data;
     }

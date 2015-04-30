@@ -7,13 +7,11 @@
     <parameters>
         <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
         <parameter key="my_poseo.search.class">%my_poseo.api.search_class%</parameter>
-        <parameter key="my_poseo.cache.class">%my_poseo.api.cache_class%</parameter>
     </parameters>
 
     <services>
         <service id="my_poseo.search" class="%my_poseo.search.class%">
             <argument type="service" id="my_poseo.search.guzzle.client"/>
-            <argument type="service" id="%my_poseo.cache.class%"/>
         </service>
 
         <service id="my_poseo.search.guzzle.client" class="%guzzle.client.class%">

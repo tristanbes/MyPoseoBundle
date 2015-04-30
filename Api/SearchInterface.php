@@ -20,12 +20,12 @@ interface SearchInterface
      * Process the API request
      *
      * @param Request $request The guzzle request
-     * @param string  $cacheName
+     * @param string  $cacheKey
      * @param integer $ttl
      *
      * @return
      */
-    public function doRequest(Request $request, $cacheName = null, $ttl = null);
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null);
 
     /**
      * Process the API response, provides error handling

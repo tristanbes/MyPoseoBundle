@@ -11,4 +11,4 @@ namespace Tristanbes\MyPoseoBundle\Exception;
 
 class NotEnoughCreditsException extends \Exception
 {
-} 
+}
