@@ -46,10 +46,6 @@ class SearchMock implements SearchInterface
         return $data;
     }
 
-    public function processResponse(Response $response)
-    {
-    }
-
     public function getNaturalSeoResult()
     {
     }
@@ -66,7 +62,11 @@ class SearchMock implements SearchInterface
     {
     }
 
-    public function doRequest(Request $request)
+    public function doRequest(Request $request, $cacheName = null, $ttl = null)
+    {
+    }
+
+    public function processResponse(Response $response)
     {
     }
 }

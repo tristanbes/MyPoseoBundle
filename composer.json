@@ -16,7 +16,8 @@
         "symfony/config": ">=2.1",
         "symfony/http-kernel": ">=2.1",
         "symfony/dependency-injection": ">=2.1",
-        "misd/guzzle-bundle": "1.1.*@dev"
+        "misd/guzzle-bundle": "1.1.*@dev",
+        "doctrine/doctrine-cache-bundle": "~1.0"
     },
     "autoload": {
         "psr-4": { "Tristanbes\\MyPoseoBundle\\": "" }

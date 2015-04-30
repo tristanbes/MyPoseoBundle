@@ -26,8 +26,8 @@ class MyPoseoExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $config        = $this->processConfiguration($configuration, $configs);
+        $loader        = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
         if (isset($config['api']['type']['main'])) {
             $loader->load('services.xml');
@@ -44,6 +44,8 @@ class MyPoseoExtension extends Extension
             $container->setParameter('my_poseo.api.search.base_url', $config['api']['type']['search']['base_url']);
             $container->setParameter('my_poseo.api.key', $config['api']['key']);
         }
+
         $container->setParameter('my_poseo.api.search_class', $config['api']['search_class']);
+        $container->setParameter('my_poseo.api.cache_class', $config['api']['cache_class']);
     }
 }

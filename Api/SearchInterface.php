@@ -17,18 +17,22 @@ use Guzzle\Http\Message\Response;
 interface SearchInterface
 {
     /**
+     * Process the API request
+     *
+     * @param Request $request The guzzle request
+     * @param string  $cacheName
+     * @param integer $ttl
+     *
+     * @return
+     */
+    public function doRequest(Request $request, $cacheName = null, $ttl = null);
+
+    /**
      * Process the API response, provides error handling
      *
      * @param Response $response The guzzle response
      */
     public function processResponse(Response $response);
-
-    /**
-     * Process the API request
-     *
-     * @param Request $request The guzzle request
-     */
-    public function doRequest(Request $request);
 
     /**
      * Returns the identifiers of the search engine's extension

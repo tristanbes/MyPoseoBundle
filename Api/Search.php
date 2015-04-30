@@ -8,6 +8,7 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
+use Doctrine\Common\Cache\Cache;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Message\Request;
@@ -25,11 +26,57 @@ class Search implements SearchInterface
     private $client;
 
     /**
-     * @param Client $client The guzzle client
+     * @var Cache
      */
-    public function __construct(Client $client)
+    private $cache;
+
+    /**
+     * @param Client $client The guzzle client
+     * @param Cache  $cache  The Doctrine Cache interface
+     */
+    public function __construct(Client $client, Cache $cache)
     {
         $this->client = $client;
+        $this->cache  = $cache;
+    }
+
+    /**
+     * Process the API request
+     *
+     * @param Request $request The guzzle request
+     * @param string  $cacheName
+     * @param integer $ttl
+     *
+     * @throws NotEnoughCreditsException
+     *
+     * @return Response
+     */
+    public function doRequest(Request $request, $cacheName = null, $ttl = null)
+    {
+        try {
+            if ($cacheName && $ttl) {
+                if ($this->cache->contains($cacheName)) {
+
+                    return $this->cache->fetch($cacheName);
+                } else {
+                    $response = $this->client->send($request);
+                    $data     = $this->processResponse($response);
+                    $this->cache->save($cacheName, $data, $ttl);
+
+                    return $data;
+                }
+            } else {
+                $response = $this->client->send($request);
+
+                return $this->processResponse($response);
+            }
+        } catch (BadResponseException $e) {
+            $json = $e->getResponse()->json();
+
+            if ($json['myposeo']['code'] == '-1' && $json['myposeo']['message'] == 'No enough credits') {
+                throw new NotEnoughCreditsException();
+            }
+        }
     }
 
     /**
@@ -53,30 +100,6 @@ class Search implements SearchInterface
     }
 
     /**
-     * Process the API request
-     *
-     * @param Request $request The guzzle request
-     *
-     * @throws NotEnoughCreditsException
-     *
-     * @return Response
-     */
-    public function doRequest(Request $request)
-    {
-        try {
-            $response = $this->client->send($request);
-        } catch (BadResponseException $e) {
-            $json = $e->getResponse()->json();
-
-            if ($json['myposeo']['code'] == '-1' && $json['myposeo']['message'] == 'No enough credits') {
-                throw new NotEnoughCreditsException();
-            }
-        }
-
-        return $response;
-    }
-
-    /**
      * Returns the identifiers of the search engine's extension
      *
      * @param string $searchEngine The search engine
@@ -85,14 +108,14 @@ class Search implements SearchInterface
      */
     public function getSearchEngineExtensions($searchEngine)
     {
-        $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $cacheName = $searchEngine . '_locations';
+        $request   = $this->client->createRequest('GET', 'tool/json');
+        $query     = $request->getQuery();
 
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
 
-        $response = $this->doRequest($request);
-        $data     = $this->processResponse($response);
+        $data = $this->doRequest($request, $cacheName, 1209600);
 
         return $data;
     }
@@ -114,8 +137,7 @@ class Search implements SearchInterface
         $query->set('country', $country);
         $query->set('city', $name);
 
-        $response = $this->doRequest($request);
-        $data     = $this->processResponse($response);
+        $data = $this->doRequest($request);
 
         return $data;
     }
@@ -156,8 +178,7 @@ class Search implements SearchInterface
             $query->set('maxPage', $maxPage);
         }
 
-        $response = $this->doRequest($request);
-        $data     = $this->processResponse($response);
+        $data = $this->doRequest($request);
 
         return $data;
     }
