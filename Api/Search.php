@@ -9,7 +9,10 @@
 namespace Tristanbes\MyPoseoBundle\Api;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
+use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/
@@ -32,18 +35,30 @@ class Search implements SearchInterface
     /**
      * Process the API response, provides error handling
      *
-     * @param Response $response The guzzle response
+     * @param Request $request
      *
+     * @throws NotEnoughCreditsException
      * @throws \Exception
      *
      * @return array
      */
-    public function processResponse(Response $response)
+    public function processResponse(Request $request)
     {
+
+        try {
+            $response = $this->client->send($request);
+        } catch (BadResponseException $e) {
+            $json = $e->getResponse()->json();
+
+            if ($json['myposeo']['code'] == '-1' && $json['myposeo']['message'] == 'No enough credits') {
+                throw new NotEnoughCreditsException();
+            }
+        }
+
         $data = $response->json();
 
         if (isset($data['status']) && $data['status'] != "success") {
-            throw new \Exception('MyPoseo API: '.$data['message']);
+            throw new \Exception('MyPoseo API: ' . $data['message']);
         }
 
         return $data;
@@ -64,8 +79,7 @@ class Search implements SearchInterface
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $data = $this->processResponse($request);
 
         return $data;
     }
@@ -87,8 +101,7 @@ class Search implements SearchInterface
         $query->set('country', $country);
         $query->set('city', $name);
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $data = $this->processResponse($request);
 
         return $data;
     }
@@ -129,8 +142,7 @@ class Search implements SearchInterface
             $query->set('maxPage', $maxPage);
         }
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $data = $this->processResponse($request);
 
         return $data;
     }

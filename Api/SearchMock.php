@@ -9,7 +9,7 @@
 namespace Tristanbes\MyPoseoBundle\Api;
 
 use Guzzle\Http\Client;
-use Guzzle\Http\Message\Response;
+use Guzzle\Http\Message\Request;
 
 /**
  * Class used when the application is in test environment
@@ -45,7 +45,7 @@ class SearchMock implements SearchInterface
         return $data;
     }
 
-    public function processResponse(Response $response)
+    public function processResponse(Request $request)
     {
     }
 
