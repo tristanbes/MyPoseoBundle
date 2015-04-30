@@ -44,5 +44,6 @@ class MyPoseoExtension extends Extension
             $container->setParameter('my_poseo.api.search.base_url', $config['api']['type']['search']['base_url']);
             $container->setParameter('my_poseo.api.key', $config['api']['key']);
         }
+        $container->setParameter('my_poseo.api.search_class', $config['api']['search_class']);
     }
 }
