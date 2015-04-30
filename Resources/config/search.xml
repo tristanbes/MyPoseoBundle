@@ -6,7 +6,7 @@
 
     <parameters>
         <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
-        <parameter key="my_poseo.search.class">Tristanbes\MyPoseoBundle\Api\Search</parameter>
+        <parameter key="my_poseo.search.class">%my_poseo.api.search_class%</parameter>
     </parameters>
 
     <services>

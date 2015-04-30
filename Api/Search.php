@@ -14,7 +14,7 @@ use Guzzle\Http\Message\Response;
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/
  */
-class Search
+class Search implements SearchInterface
 {
     /**
      * @var Client
