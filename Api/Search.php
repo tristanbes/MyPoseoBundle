@@ -33,7 +33,7 @@ class Search implements SearchInterface
 
     /**
      * @param Client $client The guzzle client
-     * @param Cache  $cache  The Doctrine Cache interface
+     * @param Cache $cache   The Doctrine Cache interface
      */
     public function __construct(Client $client, Cache $cache = null)
     {
@@ -45,7 +45,7 @@ class Search implements SearchInterface
      * Process the API request
      *
      * @param Request $request The guzzle request
-     * @param string  $cacheKey
+     * @param string $cacheKey
      * @param integer $ttl
      *
      * @throws NotEnoughCreditsException
@@ -102,20 +102,21 @@ class Search implements SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string $searchEngine The search engine
+     * @param string  $searchEngine The search engine
+     * @param integer $ttl          The time to live for the cache
      *
      * @return array
      */
-    public function getSearchEngineExtensions($searchEngine)
+    public function getSearchEngineExtensions($searchEngine, $ttl = null)
     {
-        $cacheKey = $searchEngine . '_locations';
         $request  = $this->client->createRequest('GET', 'tool/json');
         $query    = $request->getQuery();
 
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
 
-        $data = $this->doRequest($request, $cacheKey, 1209600);
+        $cacheKey = $searchEngine . '_locations';
+        $data     = $this->doRequest($request, $cacheKey, $ttl);
 
         return $data;
     }
@@ -131,7 +132,7 @@ class Search implements SearchInterface
     public function getTownCode($name, $country = 'FR')
     {
         $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $query = $request->getQuery();
 
         $query->set('method', 'getGeoloc');
         $query->set('country', $country);
@@ -145,10 +146,10 @@ class Search implements SearchInterface
     /**
      * Retrieves the url position given a keyword
      *
-     * @param string  $keyword
-     * @param string  $url
-     * @param string  $searchEngine
-     * @param string  $callback
+     * @param string $keyword
+     * @param string $url
+     * @param string $searchEngine
+     * @param string $callback
      * @param integer $geolocId
      * @param integer $location
      * @param integer $maxPage
@@ -158,7 +159,7 @@ class Search implements SearchInterface
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
     {
         $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $query = $request->getQuery();
 
         $query->set('method', 'getPosition');
         $query->set('keyword', $keyword);

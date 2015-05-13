@@ -16,7 +16,9 @@ class DynamicServiceCacheCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $container->getDefinition('my_poseo.search')
-            ->addArgument(new Reference($container->getParameter('my_poseo.api.cache_service_id')));
+        if ($container->getParameter('my_poseo.api.cache_service_id') != null) {
+            $container->getDefinition('my_poseo.search')
+                ->addArgument(new Reference($container->getParameter('my_poseo.api.cache_service_id')));
+        }
     }
 }

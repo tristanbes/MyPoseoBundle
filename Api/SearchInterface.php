@@ -37,9 +37,10 @@ interface SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string $searchEngine The search engine
+     * @param string  $searchEngine The search engine
+     * @param integer $ttl          The time to live for the cache
      */
-    public function getSearchEngineExtensions($searchEngine);
+    public function getSearchEngineExtensions($searchEngine, $ttl = null);
 
     /**
      * Get the town's code

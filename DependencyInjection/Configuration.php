@@ -36,6 +36,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('cache_service_id')
                             ->info('Defines the service id of the cache that will be used')
+                            ->defaultValue(null)
                         ->end()
                         ->scalarNode('key')
                             ->isRequired()
