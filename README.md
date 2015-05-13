@@ -19,7 +19,7 @@ Installation:
 
 Add tristanbes/my-poseo-bundle to your composer.json:
 ``` bash
-php composer.phar require "tristanbes/my-poseo-bundle": "1.0.*@dev"
+php composer.phar require "tristanbes/my-poseo-bundle": "1.*@dev"
 ```
 
 Register the bundle in the kernel:
