@@ -33,7 +33,7 @@ class Search implements SearchInterface
 
     /**
      * @param Client $client The guzzle client
-     * @param Cache $cache   The Doctrine Cache interface
+     * @param Cache  $cache  The Doctrine Cache interface
      */
     public function __construct(Client $client, Cache $cache = null)
     {
@@ -45,7 +45,7 @@ class Search implements SearchInterface
      * Process the API request
      *
      * @param Request $request The guzzle request
-     * @param string $cacheKey
+     * @param string  $cacheKey
      * @param integer $ttl
      *
      * @throws NotEnoughCreditsException
@@ -93,7 +93,7 @@ class Search implements SearchInterface
         $data = $response->json();
 
         if (isset($data['status']) && $data['status'] != "success") {
-            throw new \Exception('MyPoseo API: ' . $data['message']);
+            throw new \Exception('MyPoseo API: '.$data['message']);
         }
 
         return $data;
@@ -146,10 +146,10 @@ class Search implements SearchInterface
     /**
      * Retrieves the url position given a keyword
      *
-     * @param string $keyword
-     * @param string $url
-     * @param string $searchEngine
-     * @param string $callback
+     * @param string  $keyword
+     * @param string  $url
+     * @param string  $searchEngine
+     * @param string  $callback
      * @param integer $geolocId
      * @param integer $location
      * @param integer $maxPage
