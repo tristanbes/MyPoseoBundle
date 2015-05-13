@@ -9,6 +9,7 @@
 namespace Tristanbes\MyPoseoBundle\Api;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -32,21 +33,18 @@ class SearchMock implements SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string $searchEngine The search engine
+     * @param string  $searchEngine The search engine
+     * @param integer $ttl          The time to live for the cache
      *
      * @return array
      */
-    public function getSearchEngineExtensions($searchEngine)
+    public function getSearchEngineExtensions($searchEngine, $ttl = null)
     {
         $data             = [];
         $data[13]['id']   = 13;
         $data[13]['name'] = '.fr (fr)';
 
         return $data;
-    }
-
-    public function processResponse(Response $response)
-    {
     }
 
     public function getNaturalSeoResult()
@@ -62,6 +60,14 @@ class SearchMock implements SearchInterface
     }
 
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
+    {
+    }
+
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
+    {
+    }
+
+    public function processResponse(Response $response)
     {
     }
 }

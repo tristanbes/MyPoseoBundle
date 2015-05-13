@@ -8,8 +8,13 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
+use Doctrine\Common\Cache\Cache;
 use Guzzle\Http\Client;
+use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
+
+use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/
@@ -22,17 +27,62 @@ class Search implements SearchInterface
     private $client;
 
     /**
-     * @param Client $client The guzzle client
+     * @var Cache
      */
-    public function __construct(Client $client)
+    private $cache;
+
+    /**
+     * @param Client $client The guzzle client
+     * @param Cache  $cache  The Doctrine Cache interface
+     */
+    public function __construct(Client $client, Cache $cache = null)
     {
         $this->client = $client;
+        $this->cache  = $cache;
+    }
+
+    /**
+     * Process the API request
+     *
+     * @param Request $request The guzzle request
+     * @param string  $cacheKey
+     * @param integer $ttl
+     *
+     * @throws NotEnoughCreditsException
+     *
+     * @return Response
+     */
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
+    {
+        try {
+            if ($cacheKey && $ttl && $this->cache) {
+                if ($this->cache->contains($cacheKey)) {
+                    return $this->cache->fetch($cacheKey);
+                } else {
+                    $response = $this->client->send($request);
+                    $data     = $this->processResponse($response);
+                    $this->cache->save($cacheKey, $data, $ttl);
+
+                    return $data;
+                }
+            } else {
+                $response = $this->client->send($request);
+
+                return $this->processResponse($response);
+            }
+        } catch (BadResponseException $e) {
+            $json = $e->getResponse()->json();
+
+            if ($json['myposeo']['code'] == '-1' && $json['myposeo']['message'] == 'No enough credits') {
+                throw new NotEnoughCreditsException();
+            }
+        }
     }
 
     /**
      * Process the API response, provides error handling
      *
-     * @param Response $response The guzzle response
+     * @param Response $response
      *
      * @throws \Exception
      *
@@ -52,20 +102,21 @@ class Search implements SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string $searchEngine The search engine
+     * @param string  $searchEngine The search engine
+     * @param integer $ttl          The time to live for the cache
      *
      * @return array
      */
-    public function getSearchEngineExtensions($searchEngine)
+    public function getSearchEngineExtensions($searchEngine, $ttl = null)
     {
-        $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $request  = $this->client->createRequest('GET', 'tool/json');
+        $query    = $request->getQuery();
 
         $query->set('method', 'getLocations');
         $query->set('searchEngine', $searchEngine);
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $cacheKey = $searchEngine . '_locations';
+        $data     = $this->doRequest($request, $cacheKey, $ttl);
 
         return $data;
     }
@@ -81,14 +132,13 @@ class Search implements SearchInterface
     public function getTownCode($name, $country = 'FR')
     {
         $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $query = $request->getQuery();
 
         $query->set('method', 'getGeoloc');
         $query->set('country', $country);
         $query->set('city', $name);
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $data = $this->doRequest($request);
 
         return $data;
     }
@@ -109,7 +159,7 @@ class Search implements SearchInterface
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
     {
         $request = $this->client->createRequest('GET', 'tool/json');
-        $query   = $request->getQuery();
+        $query = $request->getQuery();
 
         $query->set('method', 'getPosition');
         $query->set('keyword', $keyword);
@@ -129,8 +179,7 @@ class Search implements SearchInterface
             $query->set('maxPage', $maxPage);
         }
 
-        $response = $this->client->send($request);
-        $data     = $this->processResponse($response);
+        $data = $this->doRequest($request);
 
         return $data;
     }

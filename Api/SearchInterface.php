@@ -8,6 +8,7 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
+use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -15,6 +16,17 @@ use Guzzle\Http\Message\Response;
  */
 interface SearchInterface
 {
+    /**
+     * Process the API request
+     *
+     * @param Request $request The guzzle request
+     * @param string  $cacheKey
+     * @param integer $ttl
+     *
+     * @return
+     */
+    public function doRequest(Request $request, $cacheKey = null, $ttl = null);
+
     /**
      * Process the API response, provides error handling
      *
@@ -25,9 +37,10 @@ interface SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string $searchEngine The search engine
+     * @param string  $searchEngine The search engine
+     * @param integer $ttl          The time to live for the cache
      */
-    public function getSearchEngineExtensions($searchEngine);
+    public function getSearchEngineExtensions($searchEngine, $ttl = null);
 
     /**
      * Get the town's code
@@ -53,4 +66,4 @@ interface SearchInterface
     public function getNaturalSeoResult();
 
     public function getSemResult();
-} 
+}
