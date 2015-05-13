@@ -17,7 +17,7 @@ The Search API allows you to get the position of an URL by keyword(s) among othe
 Installation:
 --------------
 
-Add ElaoFormTranslationBundle to your composer.json:
+Add tristanbes/my-poseo-bundle to your composer.json:
 ``` bash
 php composer.phar require "tristanbes/my-poseo-bundle": "1.0.*@dev"
 ```
