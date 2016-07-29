@@ -4,14 +4,17 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
-        <parameter key="my_poseo.search.class">%my_poseo.api.search_class%</parameter>
-    </parameters>
+
 
     <services>
-        <service id="my_poseo.search" class="%my_poseo.search.class%">
+        <service id="my_poseo.search" class="Tristanbes\MyPoseoBundle\Api\Search">
             <argument type="service" id="my_poseo.search.guzzle.client"/>
+        </service>
+
+        <service id="my_poseo.follow.client" class="Tristanbes\MyPoseoBundle\Connection\RestClient">
+            <argument>%my_poseo.api.key%</argument>
+            <argument>%my_poseo.api.main.base_url%</argument>
+            <argument>%my_poseo.api.main.version%</argument>
         </service>
 
         <service id="my_poseo.search.guzzle.client" class="%guzzle.client.class%">

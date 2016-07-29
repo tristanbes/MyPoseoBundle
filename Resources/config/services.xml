@@ -5,8 +5,6 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="guzzle.client.class">Guzzle\Service\Client</parameter>
-        <parameter key="my_poseo.follow.class">Tristanbes\MyPoseoBundle\Api\Follow</parameter>
     </parameters>
 
     <services>
@@ -14,16 +12,14 @@
             <argument type="service" id="my_poseo.main.guzzle.client"/>
         </service>
 
-        <service id="my_poseo.main.guzzle.client" class="%guzzle.client.class%">
-            <tag name="guzzle.client"/>
+        <service id="my_poseo.follow.client" class="Tristanbes\MyPoseoBundle\Connection\RestClient">
+            <argument>%my_poseo.api.key%</argument>
             <argument>%my_poseo.api.main.base_url%</argument>
-            <argument type="collection">
-                <argument key="version">%my_poseo.api.main.version%</argument>
-            </argument>
+            <argument>%my_poseo.api.main.version%</argument>
             <call method="setDefaultOption">
                 <argument>query</argument>
                 <argument type="collection">
-                    <argument key="key">%my_poseo.api.key%</argument>
+                    <argument key="key"></argument>
                 </argument>
             </call>
         </service>

@@ -12,7 +12,7 @@ This bundle provides a way to communicate with [MyPoseo](http://fr.myposeo.com/)
 
 For now, only the _[Search API](http://fr.myposeo.com/nos-api/api-search/)_  has been wired. If you need more, PR are welcome.
 
-The Search API allows you to get the position of an URL by keyword(s) among other feature.
+The Search API allows you to get the position of an URL by keyword(s) among other features.
 
 Installation:
 --------------
