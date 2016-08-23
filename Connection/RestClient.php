@@ -10,14 +10,15 @@ namespace Tristanbes\MyPoseoBundle\Connection;
 
 use Http\Client\HttpClient;
 use Http\Client\Common\PluginClient;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Http\Message\ResponseInterface;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication\QueryParam;
-use Psr\Http\Message\ResponseInterface;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
 
-use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
+use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 
 /**
  * This class is a wrapper for the HTTP client.
@@ -42,16 +43,17 @@ class RestClient
     protected $apiHost;
 
     /**
-     * @var null
+     * @var CacheItemPoolInterface
      */
     protected $cache;
 
     /**
-     * @param string     $apiKey
-     * @param string     $apiHost
-     * @param HttpClient $httpClient
+     * @param string                 $apiKey
+     * @param string                 $apiHost
+     * @param HttpClient             $httpClient
+     * @param CacheItemPoolInterface $cache
      */
-    public function __construct($apiKey, $apiHost, $httpClient = null, $cache = null)
+    public function __construct($apiKey, $apiHost, $httpClient = null, CacheItemPoolInterface $cache = null)
     {
         $this->apiKey     = $apiKey;
         $this->apiHost    = $apiHost;
@@ -94,8 +96,8 @@ class RestClient
         $saveToCache = false;
 
         if ($cacheKey !== null && $ttl !== null && $this->cache) {
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
+            if ($this->cache->hasItem($cacheKey)) {
+                return $this->cache->getItem($cacheKey)->get();
             } else {
                 $saveToCache = true;
             }
@@ -112,7 +114,13 @@ class RestClient
         $data = $this->processResponse($rawResponse);
 
         if ($this->cache && true === $saveToCache) {
-            $this->cache->save($cacheKey, $data, $ttl);
+            $item = $this->cache
+                ->getItem($cacheKey)
+                ->set($data)
+                ->expiresAfter($ttl)
+            ;
+
+            $this->cache->save($item);
         }
 
         return $data;
