@@ -24,5 +24,11 @@ class DynamicServiceCacheCompilerPass implements CompilerPassInterface
                 ->addArgument(new Reference($container->getParameter('my_poseo.api.cache_service_id')))
             ;
         }
+
+        if ($container->getParameter('my_poseo.api.http_client') != null) {
+            $container->getDefinition('my_poseo.api.http_client')
+                ->replaceArgument(2, new Reference($container->getParameter('my_poseo.api.http_client'))
+            );
+        }
     }
 }

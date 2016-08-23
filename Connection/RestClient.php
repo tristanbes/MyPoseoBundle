@@ -51,7 +51,7 @@ class RestClient
      * @param string     $apiHost
      * @param HttpClient $httpClient
      */
-    public function __construct($apiKey, $apiHost, HttpClient $httpClient = null, $cache = null)
+    public function __construct($apiKey, $apiHost, $httpClient = null, $cache = null)
     {
         $this->apiKey     = $apiKey;
         $this->apiHost    = $apiHost;
