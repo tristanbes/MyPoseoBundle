@@ -155,10 +155,10 @@ class RestClient
     }
 
     /**
-     * @param string $endpointUrl
-     * @param array  $queryString
-     * @param null   $cacheKey
-     * @param null   $ttl
+     * @param string       $endpointUrl
+     * @param array        $queryString
+     * @param string|null  $cacheKey
+     * @param integer|null $ttl
      *
      * @return ResponseInterface
      */

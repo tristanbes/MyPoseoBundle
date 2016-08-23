@@ -8,17 +8,7 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
-use Http\Client\Common\PluginClient;
-use Http\Client\HttpClient;
-use Doctrine\Common\Cache\Cache;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\Authentication\QueryParam;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
-
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Tristanbes\MyPoseoBundle\Connection\RestClient;
-use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/

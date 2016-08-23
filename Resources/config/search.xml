@@ -13,7 +13,7 @@
             <argument>%my_poseo.api.key%</argument>
             <argument>%my_poseo.api.search.base_url%</argument>
             <argument>%my_poseo.api.http_client%</argument>
-            <argument>%my_poseo.api.cache_service_id%%</argument>
+            <argument>%my_poseo.api.cache_service_id%</argument>
         </service>
 
     </services>
