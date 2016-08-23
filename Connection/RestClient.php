@@ -87,13 +87,13 @@ class RestClient
      * @param string  $cacheKey
      * @param integer $ttl
      *
-     * @return Response
+     * @return array
      */
     public function send($method, $uri, $body = null, array $headers = [], $cacheKey = null, $ttl = null)
     {
         $saveToCache = false;
 
-        if ($cacheKey && $ttl && $this->cache) {
+        if ($cacheKey !== null && $ttl !== null && $this->cache) {
             if ($this->cache->contains($cacheKey)) {
                 return $this->cache->fetch($cacheKey);
             } else {
@@ -109,13 +109,13 @@ class RestClient
         $request = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
         $rawResponse = $this->getHttpClient()->sendRequest($request);
 
-        $response = $this->processResponse($rawResponse);
+        $data = $this->processResponse($rawResponse);
 
-        if (true === $saveToCache) {
-            $this->cache->save($cacheKey, $response, $ttl);
+        if ($this->cache && true === $saveToCache) {
+            $this->cache->save($cacheKey, $data, $ttl);
         }
 
-        return $response;
+        return $data;
     }
 
     /**
