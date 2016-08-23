@@ -9,8 +9,8 @@
 namespace Tristanbes\MyPoseoBundle\Exception;
 
 /**
- * Class NotEnoughCreditsException
+ * Class ThrottleLimitException
  */
-class NotEnoughCreditsException extends \Exception
+class ThrottleLimitException extends \Exception
 {
 }

@@ -19,7 +19,7 @@ Installation:
 
 Add tristanbes/my-poseo-bundle to your composer.json:
 ``` bash
-php composer.phar require "tristanbes/my-poseo-bundle": "1.*@dev"
+php composer.phar require "tristanbes/my-poseo-bundle": "2.*"
 ```
 
 Register the bundle in the kernel:
@@ -47,11 +47,9 @@ my_poseo:
         key: "YOUR_API_KEY"
         type:
             main:
-                base_url: "http://api.myposeo.com/{version}/m/api"
-                version: 1.1
+                base_url: "http://api.myposeo.com/1.1/m/api"
             search:
-                base_url: "http://api.myposeo.com/m/{version}"
-                version: "apiv2"
+                base_url: "http://api.myposeo.com/m/apiv2"
 ```
 
 Your API key can be found on [this page](http://account.myposeo.com/account/configuration/api).

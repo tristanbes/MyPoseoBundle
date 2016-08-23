@@ -8,15 +8,16 @@
 
 namespace Tristanbes\MyPoseoBundle\Connection;
 
-use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
+use Http\Client\Common\PluginClient;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
-use Psr\Http\Message\ResponseInterface;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Message\Authentication\QueryParam;
+use Psr\Http\Message\ResponseInterface;
 
 use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
+use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
 
 /**
  * This class is a wrapper for the HTTP client.
@@ -41,30 +42,21 @@ class RestClient
     protected $apiHost;
 
     /**
-     * The version of the API to use.
-     *
-     * @var string
+     * @var null
      */
-    protected $apiVersion = 'v2';
-
-    /**
-     * If we should use SSL or not.
-     *
-     * @var bool
-     */
-    protected $sslEnabled = true;
+    protected $cache;
 
     /**
      * @param string     $apiKey
      * @param string     $apiHost
      * @param HttpClient $httpClient
      */
-    public function __construct($apiKey, $apiHost, $version, HttpClient $httpClient = null)
+    public function __construct($apiKey, $apiHost, HttpClient $httpClient = null, $cache = null)
     {
         $this->apiKey     = $apiKey;
         $this->apiHost    = $apiHost;
-        $this->apiVersion = $version;
         $this->httpClient = $httpClient;
+        $this->cache      = $cache;
     }
 
      /**
@@ -88,11 +80,12 @@ class RestClient
     /**
      * Sends the API request if cache not hit
      *
-     * @param RequestInterface $request
-     * @param string           $cacheKey
-     * @param integer          $ttl
-     *
-     * @throws NotEnoughCreditsException
+     * @param string  $method
+     * @param string  $uri
+     * @param null    $body
+     * @param array   $headers
+     * @param string  $cacheKey
+     * @param integer $ttl
      *
      * @return Response
      */
@@ -106,6 +99,11 @@ class RestClient
             } else {
                 $saveToCache = true;
             }
+        }
+
+        if (is_array($body)) {
+            $body = http_build_query($body);
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
         $request = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
@@ -149,6 +147,10 @@ class RestClient
             throw new NotEnoughCreditsException();
         }
 
+        if ($jsonResponseData['myposeo']['code'] == '-1') {
+            throw new ThrottleLimitException();
+        }
+
         return $jsonResponseData;
     }
 
@@ -166,25 +168,51 @@ class RestClient
     }
 
     /**
+     * @param string $endpointUrl
+     * @param array  $postData
+     *
+     * @return \stdClass
+     */
+    public function post($endpointUrl, array $postData = [])
+    {
+        $postDataMultipart = [];
+        foreach ($postData as $key => $value) {
+            if (is_array($value)) {
+                $index = 0;
+                foreach ($value as $subValue) {
+                    $postDataMultipart[] = [
+                        'name'     => sprintf('%s[%d]', $key, $index++),
+                        'contents' => $subValue,
+                    ];
+                }
+            } else {
+                $postDataMultipart[] = [
+                    'name'     => $key,
+                    'contents' => $value,
+                ];
+            }
+        }
+
+        return $this->send('POST', $endpointUrl, $postDataMultipart);
+    }
+
+    /**
      * @param $uri
      *
      * @return string
      */
     private function getApiUrl($uri)
     {
-        return $this->generateEndpoint($this->apiHost, $this->apiVersion).$uri;
+        return $this->generateEndpoint($this->apiHost).$uri;
     }
 
     /**
      * @param string $apiEndpoint
-     * @param string $apiVersion
      *
      * @return string
      */
-    private function generateEndpoint($apiEndpoint, $apiVersion)
+    private function generateEndpoint($apiEndpoint)
     {
-        $apiUrl = strtr($apiEndpoint, ['{version}' => $apiVersion]);
-
-        return sprintf('%s/', $apiUrl);
+        return sprintf('%s/', $apiEndpoint);
     }
 }

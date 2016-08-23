@@ -26,18 +26,12 @@ use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 class Search implements SearchInterface
 {
     /**
-     * @var Client
+     * @var RestClient
      */
     private $client;
 
     /**
-     * @var Cache
-     */
-    private $cache;
-
-    /**
-     * @param Client $client The http client
-     * @param Cache  $cache  The Doctrine Cache interface
+     * @param RestClient $client The http client
      */
     public function __construct(RestClient $client)
     {
@@ -50,7 +44,7 @@ class Search implements SearchInterface
      * @param string  $searchEngine The search engine
      * @param integer $ttl          The time to live for the cache
      *
-     * @return array
+     * @return array [['id' => 1, 'name => '.fr'] [...]]
      */
     public function getSearchEngineExtensions($searchEngine, $ttl = null)
     {
@@ -70,7 +64,7 @@ class Search implements SearchInterface
      * @param string $name    The town name
      * @param string $country The country ISO
      *
-     * @return array
+     * @return array [['id' => 1, 'city_code => '1234', 'city_name' => 'dunkerque', 'code_dep' : '59']]
      */
     public function getTownCode($name, $country = 'FR')
     {
@@ -95,6 +89,20 @@ class Search implements SearchInterface
      * @param integer $maxPage
      *
      * @return array
+     *
+     *   {
+     *     "url_positioned": "",
+     *     "position": "+100",
+     *     "page": "-",
+     *     "type": "seo_natural",
+     *     "serp": "",
+     *     "nbr_results": 250000000,
+     *     "top": "https://urltestdefault.com/path/to/image",
+     *     "keyword": "keyword",
+     *     "url_search": "lemonde.fr",
+     *     "searchEngine": "google",
+     *     "location": "13"
+     *   }
      */
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
     {
@@ -125,11 +133,11 @@ class Search implements SearchInterface
 
     public function getNaturalSeoResult()
     {
-        // @todo
+        // @todo, feel free to send a PR
     }
 
     public function getSemResult()
     {
-        // @todo
+        // @todo, feel free to send a PR
     }
 }

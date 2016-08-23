@@ -29,18 +29,9 @@ class MyPoseoExtension extends Extension
         $config        = $this->processConfiguration($configuration, $configs);
         $loader        = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
-        if (isset($config['api']['type']['main'])) {
-            $loader->load('services.xml');
-
-            $container->setParameter('my_poseo.api.main.version', $config['api']['type']['main']['version']);
-            $container->setParameter('my_poseo.api.main.base_url', $config['api']['type']['main']['base_url']);
-            $container->setParameter('my_poseo.api.key', $config['api']['key']);
-        }
-
         if (isset($config['api']['type']['search'])) {
             $loader->load('search.xml');
 
-            $container->setParameter('my_poseo.api.search.version', $config['api']['type']['search']['version']);
             $container->setParameter('my_poseo.api.search.base_url', $config['api']['type']['search']['base_url']);
             $container->setParameter('my_poseo.api.key', $config['api']['key']);
         }
