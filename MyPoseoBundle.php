@@ -11,10 +11,10 @@ namespace Tristanbes\MyPoseoBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use Tristanbes\MyPoseoBundle\CompilerPass\DynamicServiceCacheCompilerPass;
+use Tristanbes\MyPoseoBundle\CompilerPass\DynamicServiceCompilerPass;
 
 /**
- * MyPoseoBundle class
+ * MyPoseo Bundle
  */
 class MyPoseoBundle extends Bundle
 {
@@ -22,6 +22,6 @@ class MyPoseoBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new DynamicServiceCacheCompilerPass());
+        $container->addCompilerPass(new DynamicServiceCompilerPass());
     }
 }

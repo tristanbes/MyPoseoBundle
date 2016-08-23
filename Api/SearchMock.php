@@ -8,9 +8,7 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
+use Tristanbes\MyPoseoBundle\Connection\RestClient;
 
 /**
  * Class used when the application is in test environment
@@ -18,14 +16,14 @@ use Guzzle\Http\Message\Response;
 class SearchMock implements SearchInterface
 {
     /**
-     * @var Client
+     * @var RestClient
      */
     private $client;
 
     /**
-     * @param Client $client The guzzle client
+     * @param RestClient $client The guzzle client
      */
-    public function __construct(Client $client)
+    public function __construct(RestClient $client)
     {
         $this->client = $client;
     }
@@ -60,14 +58,6 @@ class SearchMock implements SearchInterface
     }
 
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
-    {
-    }
-
-    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
-    {
-    }
-
-    public function processResponse(Response $response)
     {
     }
 }

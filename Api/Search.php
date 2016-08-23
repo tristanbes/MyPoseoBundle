@@ -8,13 +8,7 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
-use Doctrine\Common\Cache\Cache;
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-
-use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
+use Tristanbes\MyPoseoBundle\Connection\RestClient;
 
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/
@@ -22,81 +16,16 @@ use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
 class Search implements SearchInterface
 {
     /**
-     * @var Client
+     * @var RestClient
      */
     private $client;
 
     /**
-     * @var Cache
+     * @param RestClient $client The http client
      */
-    private $cache;
-
-    /**
-     * @param Client $client The guzzle client
-     * @param Cache  $cache  The Doctrine Cache interface
-     */
-    public function __construct(Client $client, Cache $cache = null)
+    public function __construct(RestClient $client)
     {
         $this->client = $client;
-        $this->cache  = $cache;
-    }
-
-    /**
-     * Process the API request
-     *
-     * @param Request $request The guzzle request
-     * @param string  $cacheKey
-     * @param integer $ttl
-     *
-     * @throws NotEnoughCreditsException
-     *
-     * @return Response
-     */
-    public function doRequest(Request $request, $cacheKey = null, $ttl = null)
-    {
-        try {
-            if ($cacheKey && $ttl && $this->cache) {
-                if ($this->cache->contains($cacheKey)) {
-                    return $this->cache->fetch($cacheKey);
-                } else {
-                    $response = $this->client->send($request);
-                    $data     = $this->processResponse($response);
-                    $this->cache->save($cacheKey, $data, $ttl);
-
-                    return $data;
-                }
-            } else {
-                $response = $this->client->send($request);
-
-                return $this->processResponse($response);
-            }
-        } catch (BadResponseException $e) {
-            $json = $e->getResponse()->json();
-
-            if ($json['myposeo']['code'] == '-1' && $json['myposeo']['message'] == 'No enough credits') {
-                throw new NotEnoughCreditsException();
-            }
-        }
-    }
-
-    /**
-     * Process the API response, provides error handling
-     *
-     * @param Response $response
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    public function processResponse(Response $response)
-    {
-        $data = $response->json();
-
-        if (isset($data['status']) && $data['status'] != "success") {
-            throw new \Exception('MyPoseo API: '.$data['message']);
-        }
-
-        return $data;
     }
 
     /**
@@ -105,18 +34,16 @@ class Search implements SearchInterface
      * @param string  $searchEngine The search engine
      * @param integer $ttl          The time to live for the cache
      *
-     * @return array
+     * @return array [['id' => 1, 'name => '.fr'] [...]]
      */
     public function getSearchEngineExtensions($searchEngine, $ttl = null)
     {
-        $request  = $this->client->createRequest('GET', 'tool/json');
-        $query    = $request->getQuery();
+        $cacheKey = sprintf('%s_locations', $searchEngine);
 
-        $query->set('method', 'getLocations');
-        $query->set('searchEngine', $searchEngine);
-
-        $cacheKey = $searchEngine . '_locations';
-        $data     = $this->doRequest($request, $cacheKey, $ttl);
+        $data = $this->client->get('tool/json', [
+            'method'       => 'getLocations',
+            'searchEngine' => $searchEngine,
+        ], $cacheKey, $ttl);
 
         return $data;
     }
@@ -127,18 +54,15 @@ class Search implements SearchInterface
      * @param string $name    The town name
      * @param string $country The country ISO
      *
-     * @return array
+     * @return array [['id' => 1, 'city_code => '1234', 'city_name' => 'dunkerque', 'code_dep' : '59']]
      */
     public function getTownCode($name, $country = 'FR')
     {
-        $request = $this->client->createRequest('GET', 'tool/json');
-        $query = $request->getQuery();
-
-        $query->set('method', 'getGeoloc');
-        $query->set('country', $country);
-        $query->set('city', $name);
-
-        $data = $this->doRequest($request);
+        $data = $this->client->get('tool/json', [
+            'method'  => 'getGeoloc',
+            'country' => $country,
+            'city'    => $name,
+        ]);
 
         return $data;
     }
@@ -155,40 +79,55 @@ class Search implements SearchInterface
      * @param integer $maxPage
      *
      * @return array
+     *
+     *   {
+     *     "url_positioned": "",
+     *     "position": "+100",
+     *     "page": "-",
+     *     "type": "seo_natural",
+     *     "serp": "",
+     *     "nbr_results": 250000000,
+     *     "top": "https://urltestdefault.com/path/to/image",
+     *     "keyword": "keyword",
+     *     "url_search": "lemonde.fr",
+     *     "searchEngine": "google",
+     *     "location": "13"
+     *   }
      */
     public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
     {
-        $request = $this->client->createRequest('GET', 'tool/json');
-        $query = $request->getQuery();
-
-        $query->set('method', 'getPosition');
-        $query->set('keyword', $keyword);
-        $query->set('url', $url);
-        $query->set('searchEngine', $searchEngine);
-        $query->set('location', $location);
+        $options = [];
 
         if ($callback) {
-            $query->set('callback', $callback);
+            $options['callback'] = $callback;
         }
 
         if ($geolocId) {
-            $query->set('geolocId', $geolocId);
+            $options['geolocId'] = $geolocId;
         }
 
         if ($maxPage) {
-            $query->set('maxPage', $maxPage);
+            $options['maxPage'] = $maxPage;
         }
 
-        $data = $this->doRequest($request);
+        $data = $this->client->get('tool/json', array_merge([
+            'method'       => 'getPosition',
+            'keyword'      => $keyword,
+            'url'          => $url,
+            'searchEngine' => $searchEngine,
+            'location'     => $location,
+        ], $options));
 
         return $data;
     }
 
     public function getNaturalSeoResult()
     {
+        // @todo, feel free to send a PR
     }
 
     public function getSemResult()
     {
+        // @todo, feel free to send a PR
     }
 }

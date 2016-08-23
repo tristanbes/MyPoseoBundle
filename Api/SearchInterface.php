@@ -8,32 +8,11 @@
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-
 /**
  * @see http://fr.myposeo.com/nos-api/api-search/
  */
 interface SearchInterface
 {
-    /**
-     * Process the API request
-     *
-     * @param Request $request The guzzle request
-     * @param string  $cacheKey
-     * @param integer $ttl
-     *
-     * @return
-     */
-    public function doRequest(Request $request, $cacheKey = null, $ttl = null);
-
-    /**
-     * Process the API response, provides error handling
-     *
-     * @param Response $response The guzzle response
-     */
-    public function processResponse(Response $response);
-
     /**
      * Returns the identifiers of the search engine's extension
      *
