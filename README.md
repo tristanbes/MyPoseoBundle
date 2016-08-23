@@ -45,9 +45,9 @@ You can configure the bundle with:
 my_poseo:
     api:
         key: "YOUR_API_KEY"
+        cache_service_id: ~
+        http_client: 'name_of_your_http_adapter'
         type:
-            main:
-                base_url: "http://api.myposeo.com/1.1/m/api"
             search:
                 base_url: "http://api.myposeo.com/m/apiv2"
 ```
@@ -55,3 +55,10 @@ my_poseo:
 Your API key can be found on [this page](http://account.myposeo.com/account/configuration/api).
 
 **Be careful, the given API key is already url encoded !** You need to decode it since guzzle re-encode automatically all parameters
+
+Choose HTTP client
+------------------
+MyPoseoBundle 2.0 is no longer coupled to Guzzle3. Thanks to [Httplug](http://docs.php-http.org/en/latest/index.html) you can now use any
+library to transport HTTP messages. You can rely on [discovery](http://docs.php-http.org/en/latest/discovery.html) to automatically
+find an installed client or you can provide a client service name to the configuration (see [HttplugBundle](https://github.com/php-http/HttplugBundle)). 
+

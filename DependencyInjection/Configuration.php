@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('http_client')
                             ->info('service http used to make requests, see php-http')
-                            ->defaultValue(null)
+                            ->cannotBeEmpty()
                         ->end()
                         ->scalarNode('key')
                             ->isRequired()
