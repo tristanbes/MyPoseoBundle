@@ -12,8 +12,8 @@
         <service id="my_poseo.search.client" class="Tristanbes\MyPoseoBundle\Connection\RestClient">
             <argument>%my_poseo.api.key%</argument>
             <argument>%my_poseo.api.search.base_url%</argument>
-            <argument>%my_poseo.api.http_client%</argument>
-            <argument>%my_poseo.api.cache_service_id%</argument>
+            <argument>null</argument>
+            <argument>null</argument>
         </service>
 
     </services>
