@@ -6,12 +6,12 @@
 
     <services>
         <service id="my_poseo.search" class="%my_poseo.api.search_class%">
-            <argument type="service" id="my_poseo.follow.client"/>
+            <argument type="service" id="my_poseo.search.client"/>
         </service>
 
-        <service id="my_poseo.follow.client" class="Tristanbes\MyPoseoBundle\Connection\RestClient">
+        <service id="my_poseo.search.client" class="Tristanbes\MyPoseoBundle\Connection\RestClient">
             <argument>%my_poseo.api.key%</argument>
-            <argument>%my_poseo.api.main.base_url%</argument>
+            <argument>%my_poseo.api.search.base_url%</argument>
             <argument>%my_poseo.api.http_client%</argument>
             <argument>%my_poseo.api.cache_service_id%%</argument>
         </service>
