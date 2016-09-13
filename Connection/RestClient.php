@@ -151,12 +151,14 @@ class RestClient
             throw new \Exception('MyPoseo API: '.$data['message']);
         }
 
-        if ($jsonResponseData['myposeo']['code'] == '-1' && $jsonResponseData['myposeo']['message'] == 'No enough credits') {
-            throw new NotEnoughCreditsException();
-        }
+        if (isset($jsonResponseData['myposeo']['code'])) {
+            if ($jsonResponseData['myposeo']['code'] == '-1' && $jsonResponseData['myposeo']['message'] == 'No enough credits') {
+                throw new NotEnoughCreditsException();
+            }
 
-        if ($jsonResponseData['myposeo']['code'] == '-1') {
-            throw new ThrottleLimitException();
+            if ($jsonResponseData['myposeo']['code'] == '-1') {
+                throw new ThrottleLimitException();
+            }
         }
 
         return $jsonResponseData;
