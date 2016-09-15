@@ -140,13 +140,8 @@ class RestClient
         $httpResponseCode = (int) $response->getStatusCode();
 
         $data = (string) $response->getBody();
-        $jsonResponseData = json_decode($data, false);
-
-        $result = new \stdClass();
-        // return response data as json if possible, raw if not
-        $result->http_response_body = $data && $jsonResponseData === null ? $data : $jsonResponseData;
-        $result->http_response_code = $httpResponseCode;
-
+        $jsonResponseData = json_decode($data, true);
+        
         if (isset($jsonResponseData['status']) && $jsonResponseData['status'] != "success") {
             throw new \Exception('MyPoseo API: '.$data['message']);
         }
