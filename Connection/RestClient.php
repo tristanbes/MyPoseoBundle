@@ -137,26 +137,24 @@ class RestClient
      */
     public function processResponse(ResponseInterface $response)
     {
-        $httpResponseCode = (int) $response->getStatusCode();
-
         $data = (string) $response->getBody();
-        $jsonResponseData = json_decode($data, true);
-        
-        if (isset($jsonResponseData['status']) && $jsonResponseData['status'] != "success") {
-            throw new \Exception('MyPoseo API: '.$data['message']);
+        $responseData = json_decode($data, true);
+
+        if (isset($responseData['status']) && $responseData['status'] != "success" && array_key_exists('message', $responseData)) {
+            throw new \Exception(sprintf('MyPoseo API: %s', $responseData['message']));
         }
 
-        if (isset($jsonResponseData['myposeo']['code'])) {
-            if ($jsonResponseData['myposeo']['code'] == '-1' && $jsonResponseData['myposeo']['message'] == 'No enough credits') {
+        if (isset($responseData['myposeo']['code'])) {
+            if ($responseData['myposeo']['code'] == '-1' && $responseData['myposeo']['message'] == 'No enough credits') {
                 throw new NotEnoughCreditsException();
             }
 
-            if ($jsonResponseData['myposeo']['code'] == '-1') {
+            if ($responseData['myposeo']['code'] == '-1') {
                 throw new ThrottleLimitException();
             }
         }
 
-        return $jsonResponseData;
+        return $responseData;
     }
 
     /**
