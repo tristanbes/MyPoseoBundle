@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Tristanbes\MyPoseoBundle\Api\SearchInterface:
+        class: '%my_poseo.api.search_class%'
+
+    Tristanbes\MyPoseoBundle\Connection\RestClient:
+        arguments: ['%my_poseo.api.key%', '%my_poseo.api.search.base_url%', null, null]

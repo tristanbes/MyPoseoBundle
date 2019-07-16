@@ -23,8 +23,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('my_poseo');
+        $treeBuilder = new TreeBuilder('my_poseo');
+        $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
