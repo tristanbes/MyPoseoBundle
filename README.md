@@ -8,7 +8,7 @@ MyPoseoBundle
 Description:
 --------------
 
-This bundle provides a way to communicate with [MyPoseo](http://fr.myposeo.com/) webservices inside your Symfony2 application.
+This bundle provides a way to communicate with [MyPoseo](http://fr.myposeo.com/) webservices inside your Symfony4 application.
 
 For now, only the _[Search API](http://fr.myposeo.com/nos-api/api-search/)_  has been wired. If you need more, PR are welcome.
 
