@@ -63,7 +63,7 @@ class RestClient
      * Sends the API request if cache not hit
      *
      * @param array<string,string> $headers
-     * @param mixed $body
+     * @param mixed                $body
      *
      * @return array<mixed>
      */
@@ -115,10 +115,7 @@ class RestClient
         $responseData = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
 
         if (!is_array($responseData)) {
-            throw new \UnexpectedValueException(sprintf(
-                'Expected "array" as Response content, got "%s", instead.',
-                gettype($responseData)
-            ));
+            throw new \UnexpectedValueException(sprintf('Expected "array" as Response content, got "%s", instead.', gettype($responseData)));
         }
 
         if (isset($responseData['status']) && 'success' != $responseData['status'] && array_key_exists('message', $responseData)) {
@@ -140,6 +137,7 @@ class RestClient
 
     /**
      * @param array<string,mixed> $queryString
+     *
      * @return array<mixed>
      */
     public function get(string $endpointUrl, array $queryString = [], ?string $cacheKey = null, ?int $ttl = null): array
@@ -149,6 +147,7 @@ class RestClient
 
     /**
      * @param array<string,mixed> $postData
+     *
      * @return array<mixed>
      */
     public function post(string $endpointUrl, array $postData = []): array
