@@ -15,12 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Tristanbes\MyPoseoBundle\Connection\RestClient;
 
-/**
- * Class DynamicServiceCacheCompilerPass
- */
 class DynamicServiceCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (null != $container->getParameter('my_poseo.api.cache_service_id')) {
             $container->getDefinition(RestClient::class)

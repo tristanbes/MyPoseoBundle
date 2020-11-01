@@ -17,28 +17,14 @@ use Tristanbes\MyPoseoBundle\Connection\RestClient;
  */
 class SearchMock implements SearchInterface
 {
-    /**
-     * @var RestClient
-     */
     private $client;
 
-    /**
-     * @param RestClient $client The guzzle client
-     */
     public function __construct(RestClient $client)
     {
         $this->client = $client;
     }
 
-    /**
-     * Returns the identifiers of the search engine's extension
-     *
-     * @param string $searchEngine The search engine
-     * @param int    $ttl          The time to live for the cache
-     *
-     * @return array
-     */
-    public function getSearchEngineExtensions($searchEngine, $ttl = null)
+    public function getSearchEngineExtensions(string $searchEngine, ?int $ttl = null): array
     {
         $data             = [];
         $data[13]['id']   = 13;
@@ -49,17 +35,21 @@ class SearchMock implements SearchInterface
 
     public function getNaturalSeoResult()
     {
+        throw new \RuntimeException(sprintf('Method "%s" is not implemented.', __METHOD__));
     }
 
     public function getSemResult()
     {
+        throw new \RuntimeException(sprintf('Method "%s" is not implemented.', __METHOD__));
     }
 
-    public function getTownCode($name, $country = 'FR')
+    public function getTownCode(string $name, string $country = 'FR'): array
     {
+        throw new \RuntimeException(sprintf('Method "%s" is not implemented.', __METHOD__));
     }
 
-    public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null)
+    public function getUrlRankByKeyword(string $keyword, string $url, string $searchEngine = 'google', ?string $callbackUrl = null, ?int $geolocId = null, int $location = 13, ?int $maxPage = null): array
     {
+        throw new \RuntimeException(sprintf('Method "%s" is not implemented.', __METHOD__));
     }
 }

@@ -19,7 +19,7 @@ use Tristanbes\MyPoseoBundle\CompilerPass\DynamicServiceCompilerPass;
  */
 class MyPoseoBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

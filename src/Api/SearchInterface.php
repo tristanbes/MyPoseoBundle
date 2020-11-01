@@ -20,31 +20,35 @@ interface SearchInterface
      *
      * @param string $searchEngine The search engine
      * @param int    $ttl          The time to live for the cache
+     *
+     * @return list<array{ id: int, name: string }>
      */
-    public function getSearchEngineExtensions($searchEngine, $ttl = null);
+    public function getSearchEngineExtensions(string $searchEngine, ?int $ttl = null): array;
 
     /**
      * Get the town's code
      *
      * @param string $name    The town name
      * @param string $country The country ISO
+     *
+     * @return list<array{ id: int, city_code: string, city_name: string, code_dep: string }>
      */
-    public function getTownCode($name, $country = 'FR');
+    public function getTownCode(string $name, string $country = 'FR'): array;
 
     /**
      * Retrieves the url position given a keyword
      *
-     * @param string $keyword
-     * @param string $url
-     * @param string $searchEngine
-     * @param string $callback
-     * @param int    $geolocId
-     * @param int    $location
-     * @param int    $maxPage
+     * @return list<array{ url_positioned: string, position: string, page: string, type: string, serp: string, nbr_results: int, top: string, keyword: string, url_search: string, searchEngine: string, location: int }>
      */
-    public function getUrlRankByKeyword($keyword, $url, $searchEngine = 'google', $callback = null, $geolocId = null, $location = 13, $maxPage = null);
+    public function getUrlRankByKeyword(string $keyword, string $url, string $searchEngine = 'google', ?string $callbackUrl = null, ?int $geolocId = null, int $location = 13, ?int $maxPage = null): array;
 
+    /**
+     * @return mixed
+     */
     public function getNaturalSeoResult();
 
+    /**
+     * @return mixed
+     */
     public function getSemResult();
 }

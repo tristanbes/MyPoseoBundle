@@ -32,29 +32,11 @@ class RestClient
      * @var string
      */
     private $apiKey;
+    private $httpClient;
+    private $apiHost;
+    private $cache;
 
-    /**
-     * @var HttpClient
-     */
-    protected $httpClient;
-
-    /**
-     * @var string
-     */
-    protected $apiHost;
-
-    /**
-     * @var CacheItemPoolInterface
-     */
-    protected $cache;
-
-    /**
-     * @param string                 $apiKey
-     * @param string                 $apiHost
-     * @param HttpClient             $httpClient
-     * @param CacheItemPoolInterface $cache
-     */
-    public function __construct($apiKey, $apiHost, $httpClient = null, CacheItemPoolInterface $cache = null)
+    public function __construct(string $apiKey, string $apiHost, ?HttpClient $httpClient = null, ?CacheItemPoolInterface $cache = null)
     {
         $this->apiKey     = $apiKey;
         $this->apiHost    = $apiHost;
@@ -62,10 +44,7 @@ class RestClient
         $this->cache      = $cache;
     }
 
-    /**
-     * @return HttpClient
-     */
-    protected function getHttpClient()
+    protected function getHttpClient(): HttpClient
     {
         if (null === $this->httpClient) {
             $this->httpClient = HttpClientDiscovery::find();
@@ -83,19 +62,16 @@ class RestClient
     /**
      * Sends the API request if cache not hit
      *
-     * @param string $method
-     * @param string $uri
-     * @param null   $body
-     * @param string $cacheKey
-     * @param int    $ttl
+     * @param array<string,string> $headers
+     * @param mixed $body
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function send($method, $uri, $body = null, array $headers = [], $cacheKey = null, $ttl = null)
+    public function send(string $method, string $uri, $body = null, array $headers = [], ?string $cacheKey = null, ?int $ttl = null): array
     {
         $saveToCache = false;
 
-        if (null !== $cacheKey && null !== $ttl && $this->cache) {
+        if (null !== $cacheKey && null !== $ttl && null !== $this->cache) {
             if ($this->cache->hasItem($cacheKey)) {
                 return $this->cache->getItem($cacheKey)->get();
             } else {
@@ -113,7 +89,7 @@ class RestClient
 
         $data = $this->processResponse($rawResponse);
 
-        if ($this->cache && true === $saveToCache) {
+        if (null !== $this->cache && null !== $cacheKey && true === $saveToCache) {
             $item = $this->cache
                 ->getItem($cacheKey)
                 ->set($data)
@@ -131,12 +107,19 @@ class RestClient
      *
      * @throws \Exception
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function processResponse(ResponseInterface $response)
+    public function processResponse(ResponseInterface $response): array
     {
         $data         = (string) $response->getBody();
-        $responseData = json_decode($data, true);
+        $responseData = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+
+        if (!is_array($responseData)) {
+            throw new \UnexpectedValueException(sprintf(
+                'Expected "array" as Response content, got "%s", instead.',
+                gettype($responseData)
+            ));
+        }
 
         if (isset($responseData['status']) && 'success' != $responseData['status'] && array_key_exists('message', $responseData)) {
             throw new \Exception(sprintf('MyPoseo API: %s', $responseData['message']));
@@ -156,24 +139,19 @@ class RestClient
     }
 
     /**
-     * @param string      $endpointUrl
-     * @param array       $queryString
-     * @param string|null $cacheKey
-     * @param int|null    $ttl
-     *
-     * @return ResponseInterface
+     * @param array<string,mixed> $queryString
+     * @return array<mixed>
      */
-    public function get($endpointUrl, $queryString = [], $cacheKey = null, $ttl = null)
+    public function get(string $endpointUrl, array $queryString = [], ?string $cacheKey = null, ?int $ttl = null): array
     {
         return $this->send('GET', $endpointUrl.'?'.http_build_query($queryString), null, [], $cacheKey, $ttl);
     }
 
     /**
-     * @param string $endpointUrl
-     *
-     * @return \stdClass
+     * @param array<string,mixed> $postData
+     * @return array<mixed>
      */
-    public function post($endpointUrl, array $postData = [])
+    public function post(string $endpointUrl, array $postData = []): array
     {
         $postDataMultipart = [];
         foreach ($postData as $key => $value) {
@@ -196,22 +174,12 @@ class RestClient
         return $this->send('POST', $endpointUrl, $postDataMultipart);
     }
 
-    /**
-     * @param $uri
-     *
-     * @return string
-     */
-    private function getApiUrl($uri)
+    private function getApiUrl(string $uri): string
     {
         return $this->generateEndpoint($this->apiHost).$uri;
     }
 
-    /**
-     * @param string $apiEndpoint
-     *
-     * @return string
-     */
-    private function generateEndpoint($apiEndpoint)
+    private function generateEndpoint(string $apiEndpoint): string
     {
         return sprintf('%s/', $apiEndpoint);
     }
