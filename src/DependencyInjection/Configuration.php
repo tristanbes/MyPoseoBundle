@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -19,7 +21,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {

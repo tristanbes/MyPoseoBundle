@@ -23,7 +23,8 @@
     },
     "require-dev": {
         "php-http/guzzle6-adapter": "^1.0",
-        "symfony/phpunit-bridge": "^4.0 || ^5.0"
+        "symfony/phpunit-bridge": "^4.0 || ^5.0",
+        "friendsofphp/php-cs-fixer": "^2.16"
     },
     "autoload": {
         "psr-4": { "Tristanbes\\MyPoseoBundle\\": "src/" }

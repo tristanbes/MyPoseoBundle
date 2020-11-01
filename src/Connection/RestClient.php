@@ -1,4 +1,6 @@
-<?PHP
+<?php
+
+declare(strict_types=1);
 
 /**
  * MyPoseo API Bundle
@@ -8,17 +10,16 @@
 
 namespace Tristanbes\MyPoseoBundle\Connection;
 
-use Http\Client\HttpClient;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\PluginClient;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Message\ResponseInterface;
+use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication\QueryParam;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
-
-use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Http\Message\ResponseInterface;
 use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
+use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
 
 /**
  * This class is a wrapper for the HTTP client.
@@ -61,12 +62,12 @@ class RestClient
         $this->cache      = $cache;
     }
 
-     /**
+    /**
      * @return HttpClient
      */
     protected function getHttpClient()
     {
-        if ($this->httpClient === null) {
+        if (null === $this->httpClient) {
             $this->httpClient = HttpClientDiscovery::find();
         }
 
@@ -82,12 +83,11 @@ class RestClient
     /**
      * Sends the API request if cache not hit
      *
-     * @param string  $method
-     * @param string  $uri
-     * @param null    $body
-     * @param array   $headers
-     * @param string  $cacheKey
-     * @param integer $ttl
+     * @param string $method
+     * @param string $uri
+     * @param null   $body
+     * @param string $cacheKey
+     * @param int    $ttl
      *
      * @return array
      */
@@ -95,7 +95,7 @@ class RestClient
     {
         $saveToCache = false;
 
-        if ($cacheKey !== null && $ttl !== null && $this->cache) {
+        if (null !== $cacheKey && null !== $ttl && $this->cache) {
             if ($this->cache->hasItem($cacheKey)) {
                 return $this->cache->getItem($cacheKey)->get();
             } else {
@@ -104,11 +104,11 @@ class RestClient
         }
 
         if (is_array($body)) {
-            $body = http_build_query($body);
+            $body                    = http_build_query($body);
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
-        $request = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
+        $request     = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
         $rawResponse = $this->getHttpClient()->sendRequest($request);
 
         $data = $this->processResponse($rawResponse);
@@ -129,27 +129,25 @@ class RestClient
     /**
      * Process the API response, provides error handling
      *
-     * @param ResponseInterface $response
-     *
      * @throws \Exception
      *
      * @return array
      */
     public function processResponse(ResponseInterface $response)
     {
-        $data = (string) $response->getBody();
+        $data         = (string) $response->getBody();
         $responseData = json_decode($data, true);
 
-        if (isset($responseData['status']) && $responseData['status'] != "success" && array_key_exists('message', $responseData)) {
+        if (isset($responseData['status']) && 'success' != $responseData['status'] && array_key_exists('message', $responseData)) {
             throw new \Exception(sprintf('MyPoseo API: %s', $responseData['message']));
         }
 
         if (isset($responseData['myposeo']['code'])) {
-            if ($responseData['myposeo']['code'] == '-1' && $responseData['myposeo']['message'] == 'No enough credits') {
+            if ('-1' == $responseData['myposeo']['code'] && 'No enough credits' == $responseData['myposeo']['message']) {
                 throw new NotEnoughCreditsException();
             }
 
-            if ($responseData['myposeo']['code'] == '-1') {
+            if ('-1' == $responseData['myposeo']['code']) {
                 throw new ThrottleLimitException();
             }
         }
@@ -158,10 +156,10 @@ class RestClient
     }
 
     /**
-     * @param string       $endpointUrl
-     * @param array        $queryString
-     * @param string|null  $cacheKey
-     * @param integer|null $ttl
+     * @param string      $endpointUrl
+     * @param array       $queryString
+     * @param string|null $cacheKey
+     * @param int|null    $ttl
      *
      * @return ResponseInterface
      */
@@ -172,7 +170,6 @@ class RestClient
 
     /**
      * @param string $endpointUrl
-     * @param array  $postData
      *
      * @return \stdClass
      */

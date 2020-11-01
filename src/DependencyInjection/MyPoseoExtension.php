@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -9,8 +11,8 @@
 namespace Tristanbes\MyPoseoBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -21,13 +23,13 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class MyPoseoExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
-        $loader        = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader        = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         if (isset($config['api']['type']['search'])) {
             $loader->load('search.yaml');

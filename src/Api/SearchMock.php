@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -31,8 +33,8 @@ class SearchMock implements SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string  $searchEngine The search engine
-     * @param integer $ttl          The time to live for the cache
+     * @param string $searchEngine The search engine
+     * @param int    $ttl          The time to live for the cache
      *
      * @return array
      */

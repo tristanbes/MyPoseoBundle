@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -31,8 +33,8 @@ class Search implements SearchInterface
     /**
      * Returns the identifiers of the search engine's extension
      *
-     * @param string  $searchEngine The search engine
-     * @param integer $ttl          The time to live for the cache
+     * @param string $searchEngine The search engine
+     * @param int    $ttl          The time to live for the cache
      *
      * @return array [['id' => 1, 'name => '.fr'] [...]]
      */
@@ -70,13 +72,13 @@ class Search implements SearchInterface
     /**
      * Retrieves the url position given a keyword
      *
-     * @param string  $keyword
-     * @param string  $url
-     * @param string  $searchEngine
-     * @param string  $callback
-     * @param integer $geolocId
-     * @param integer $location
-     * @param integer $maxPage
+     * @param string $keyword
+     * @param string $url
+     * @param string $searchEngine
+     * @param string $callback
+     * @param int    $geolocId
+     * @param int    $location
+     * @param int    $maxPage
      *
      * @return array
      *

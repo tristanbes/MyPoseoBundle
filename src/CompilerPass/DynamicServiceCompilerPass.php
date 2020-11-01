@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -20,13 +22,13 @@ class DynamicServiceCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if ($container->getParameter('my_poseo.api.cache_service_id') != null) {
+        if (null != $container->getParameter('my_poseo.api.cache_service_id')) {
             $container->getDefinition(RestClient::class)
                 ->replaceArgument(3, new Reference($container->getParameter('my_poseo.api.cache_service_id'))
             );
         }
 
-        if ($container->getParameter('my_poseo.api.http_client') != null) {
+        if (null != $container->getParameter('my_poseo.api.http_client')) {
             $container->getDefinition(RestClient::class)
                 ->replaceArgument(2, new Reference($container->getParameter('my_poseo.api.http_client'))
             );
