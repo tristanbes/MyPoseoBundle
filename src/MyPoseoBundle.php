@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -10,7 +12,6 @@ namespace Tristanbes\MyPoseoBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Tristanbes\MyPoseoBundle\CompilerPass\DynamicServiceCompilerPass;
 
 /**
@@ -18,7 +19,7 @@ use Tristanbes\MyPoseoBundle\CompilerPass\DynamicServiceCompilerPass;
  */
 class MyPoseoBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

@@ -1,0 +1,100 @@
+name: CI
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+    TZ: UTC
+
+    COMPOSER_MEMORY_LIMIT: -1
+    PHPUNIT_FLAGS: -v
+    PHP_VERSION_DEFAULT: 7.3
+
+jobs:
+    static_analysis:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v1
+                with:
+                    php-version: ${{ env.PHP_VERSION_DEFAULT }}
+                    ini-values: date.timezone=${{ env.TZ }}, memory_limit=-1, session.gc_probability=0, opcache.enable=1, opcache.enable_cli=1, opcache.memory_consumption=256, opcache.max_accelerated_files=20000, opcache.validate_timestamps=0, realpath_cache_size=4096K, realpath_cache_ttl=600
+
+            -   run: composer install --prefer-dist --no-interaction --no-progress
+
+            -   run: vendor/bin/simple-phpunit install
+
+            -   run: composer validate --strict
+
+            -   run: vendor/bin/phpstan anal
+
+            -   run: vendor/bin/php-cs-fixer fix --dry-run
+
+    ci:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                config:
+                    # Minimum supported dependencies with the latest and oldest PHP version
+                    - PHP_VERSION: 7.3
+                      COMPOSER_FLAGS: --prefer-stable --prefer-lowest
+                      SYMFONY_DEPRECATIONS_HELPER: max[self]=0
+                    - PHP_VERSION: 7.4
+                      COMPOSER_FLAGS: --prefer-stable --prefer-lowest
+                      SYMFONY_DEPRECATIONS_HELPER: max[self]=0
+
+                    # Test the latest stable release
+                    - PHP_VERSION: 7.3
+                    - PHP_VERSION: 7.4
+                      COVERAGE: true
+                      PHPUNIT_FLAGS: -v --coverage-text
+
+                    # Test specific Symfony versions
+                    - PHP_VERSION: 7.3
+                      SYMFONY_VERSION: 4.4.* # LTS
+                    - PHP_VERSION: 7.4
+                      SYMFONY_VERSION: 4.4.* # LTS
+
+                    - PHP_VERSION: 7.3
+                      SYMFONY_VERSION: 5.0.* # Last 5.x version
+                    - PHP_VERSION: 7.4
+                      SYMFONY_VERSION: 5.0.* # Last 5.x version
+
+                    - PHP_VERSION: 7.3
+                      SYMFONY_VERSION: 5.1.*
+                    - PHP_VERSION: 7.4
+                      SYMFONY_VERSION: 5.1.*
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.config.PHP_VERSION }}
+                  coverage: ${{ matrix.config.COVERAGE }}
+                  ini-values: date.timezone=${{ env.TZ }}, memory_limit=-1, session.gc_probability=0, opcache.enable=1, opcache.enable_cli=1, opcache.memory_consumption=256, opcache.max_accelerated_files=20000, opcache.validate_timestamps=0, realpath_cache_size=4096K, realpath_cache_ttl=600
+
+            - name: Configure Composer minimum stability
+              if: matrix.config.STABILITY
+              run: composer config minimum-stability ${{ matrix.config.STABILITY }}
+
+            - name: Install globally Symfony Flex
+              run: composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-main
+
+            - name: Limit to specific Symfony version
+              if: matrix.config.SYMFONY_VERSION
+              run: echo "SYMFONY_REQUIRE=${{ matrix.config.SYMFONY_VERSION }}" >> $GITHUB_ENV
+
+            - name: Install composer dependencies
+              run: composer update ${{ matrix.config.COMPOSER_FLAGS }} --prefer-dist --no-interaction
+
+            - name: Run PHPUnit
+              run: vendor/bin/simple-phpunit ${{ matrix.config.PHPUNIT_FLAGS }}

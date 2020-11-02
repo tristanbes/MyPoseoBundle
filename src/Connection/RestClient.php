@@ -1,4 +1,6 @@
-<?PHP
+<?php
+
+declare(strict_types=1);
 
 /**
  * MyPoseo API Bundle
@@ -8,17 +10,16 @@
 
 namespace Tristanbes\MyPoseoBundle\Connection;
 
-use Http\Client\HttpClient;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
 use Http\Client\Common\PluginClient;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Message\ResponseInterface;
+use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Authentication\QueryParam;
-use Http\Client\Common\Plugin\AuthenticationPlugin;
-
-use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Http\Message\ResponseInterface;
 use Tristanbes\MyPoseoBundle\Exception\NotEnoughCreditsException;
+use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
 
 /**
  * This class is a wrapper for the HTTP client.
@@ -31,29 +32,11 @@ class RestClient
      * @var string
      */
     private $apiKey;
+    private $httpClient;
+    private $apiHost;
+    private $cache;
 
-    /**
-     * @var HttpClient
-     */
-    protected $httpClient;
-
-    /**
-     * @var string
-     */
-    protected $apiHost;
-
-    /**
-     * @var CacheItemPoolInterface
-     */
-    protected $cache;
-
-    /**
-     * @param string                 $apiKey
-     * @param string                 $apiHost
-     * @param HttpClient             $httpClient
-     * @param CacheItemPoolInterface $cache
-     */
-    public function __construct($apiKey, $apiHost, $httpClient = null, CacheItemPoolInterface $cache = null)
+    public function __construct(string $apiKey, string $apiHost, ?HttpClient $httpClient = null, ?CacheItemPoolInterface $cache = null)
     {
         $this->apiKey     = $apiKey;
         $this->apiHost    = $apiHost;
@@ -61,12 +44,9 @@ class RestClient
         $this->cache      = $cache;
     }
 
-     /**
-     * @return HttpClient
-     */
-    protected function getHttpClient()
+    protected function getHttpClient(): HttpClient
     {
-        if ($this->httpClient === null) {
+        if (null === $this->httpClient) {
             $this->httpClient = HttpClientDiscovery::find();
         }
 
@@ -82,20 +62,16 @@ class RestClient
     /**
      * Sends the API request if cache not hit
      *
-     * @param string  $method
-     * @param string  $uri
-     * @param null    $body
-     * @param array   $headers
-     * @param string  $cacheKey
-     * @param integer $ttl
+     * @param array<string,string> $headers
+     * @param mixed                $body
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function send($method, $uri, $body = null, array $headers = [], $cacheKey = null, $ttl = null)
+    public function send(string $method, string $uri, $body = null, array $headers = [], ?string $cacheKey = null, ?int $ttl = null): array
     {
         $saveToCache = false;
 
-        if ($cacheKey !== null && $ttl !== null && $this->cache) {
+        if (null !== $cacheKey && null !== $ttl && null !== $this->cache) {
             if ($this->cache->hasItem($cacheKey)) {
                 return $this->cache->getItem($cacheKey)->get();
             } else {
@@ -104,16 +80,16 @@ class RestClient
         }
 
         if (is_array($body)) {
-            $body = http_build_query($body);
+            $body                    = http_build_query($body);
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
-        $request = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
+        $request     = MessageFactoryDiscovery::find()->createRequest($method, $this->getApiUrl($uri), $headers, $body);
         $rawResponse = $this->getHttpClient()->sendRequest($request);
 
         $data = $this->processResponse($rawResponse);
 
-        if ($this->cache && true === $saveToCache) {
+        if (null !== $this->cache && null !== $cacheKey && true === $saveToCache) {
             $item = $this->cache
                 ->getItem($cacheKey)
                 ->set($data)
@@ -129,27 +105,29 @@ class RestClient
     /**
      * Process the API response, provides error handling
      *
-     * @param ResponseInterface $response
-     *
      * @throws \Exception
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function processResponse(ResponseInterface $response)
+    public function processResponse(ResponseInterface $response): array
     {
-        $data = (string) $response->getBody();
-        $responseData = json_decode($data, true);
+        $data         = (string) $response->getBody();
+        $responseData = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
 
-        if (isset($responseData['status']) && $responseData['status'] != "success" && array_key_exists('message', $responseData)) {
+        if (!is_array($responseData)) {
+            throw new \UnexpectedValueException(sprintf('Expected "array" as Response content, got "%s", instead.', gettype($responseData)));
+        }
+
+        if (isset($responseData['status']) && 'success' != $responseData['status'] && array_key_exists('message', $responseData)) {
             throw new \Exception(sprintf('MyPoseo API: %s', $responseData['message']));
         }
 
         if (isset($responseData['myposeo']['code'])) {
-            if ($responseData['myposeo']['code'] == '-1' && $responseData['myposeo']['message'] == 'No enough credits') {
+            if ('-1' == $responseData['myposeo']['code'] && 'No enough credits' == $responseData['myposeo']['message']) {
                 throw new NotEnoughCreditsException();
             }
 
-            if ($responseData['myposeo']['code'] == '-1') {
+            if ('-1' == $responseData['myposeo']['code']) {
                 throw new ThrottleLimitException();
             }
         }
@@ -158,25 +136,21 @@ class RestClient
     }
 
     /**
-     * @param string       $endpointUrl
-     * @param array        $queryString
-     * @param string|null  $cacheKey
-     * @param integer|null $ttl
+     * @param array<string,mixed> $queryString
      *
-     * @return ResponseInterface
+     * @return array<mixed>
      */
-    public function get($endpointUrl, $queryString = [], $cacheKey = null, $ttl = null)
+    public function get(string $endpointUrl, array $queryString = [], ?string $cacheKey = null, ?int $ttl = null): array
     {
         return $this->send('GET', $endpointUrl.'?'.http_build_query($queryString), null, [], $cacheKey, $ttl);
     }
 
     /**
-     * @param string $endpointUrl
-     * @param array  $postData
+     * @param array<string,mixed> $postData
      *
-     * @return \stdClass
+     * @return array<mixed>
      */
-    public function post($endpointUrl, array $postData = [])
+    public function post(string $endpointUrl, array $postData = []): array
     {
         $postDataMultipart = [];
         foreach ($postData as $key => $value) {
@@ -199,22 +173,12 @@ class RestClient
         return $this->send('POST', $endpointUrl, $postDataMultipart);
     }
 
-    /**
-     * @param $uri
-     *
-     * @return string
-     */
-    private function getApiUrl($uri)
+    private function getApiUrl(string $uri): string
     {
         return $this->generateEndpoint($this->apiHost).$uri;
     }
 
-    /**
-     * @param string $apiEndpoint
-     *
-     * @return string
-     */
-    private function generateEndpoint($apiEndpoint)
+    private function generateEndpoint(string $apiEndpoint): string
     {
         return sprintf('%s/', $apiEndpoint);
     }

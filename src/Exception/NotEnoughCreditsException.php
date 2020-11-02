@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MyPoseo API Bundle
  *
@@ -9,8 +11,8 @@
 namespace Tristanbes\MyPoseoBundle\Exception;
 
 /**
- * Class ThrottleLimitException
+ * Class NotEnoughCreditsException
  */
-class ThrottleLimitException extends \Exception
+class NotEnoughCreditsException extends \Exception
 {
 }
