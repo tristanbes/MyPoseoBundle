@@ -4,7 +4,6 @@ MyPoseoBundle
 ![CI (master)](https://github.com/tristanbes/MyPoseoBundle/workflows/CI/badge.svg)
 ![](https://img.shields.io/badge/php-%5E7.4%20%7C%7C%20%5E8.0-blue)
 ![](https://img.shields.io/badge/Symfony-%5E4.4%20%7C%7C%20%5E5.3-blue)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tristanbes/MyPoseoBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tristanbes/MyPoseoBundle/?branch=master)
 
 Description:
 --------------
