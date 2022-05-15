@@ -25,7 +25,7 @@
     "require-dev": {
         "php-http/guzzle6-adapter": "^1.0 || ^2.0",
         "symfony/phpunit-bridge": "^5.4 || ^6.0",
-        "friendsofphp/php-cs-fixer": "^2.16",
+        "friendsofphp/php-cs-fixer": "^3.8",
         "phpstan/phpstan": "^0.12.52",
         "phpstan/phpstan-strict-rules": "^0.12.5",
         "phpstan/phpstan-phpunit": "^0.12.16"
@@ -35,6 +35,9 @@
     },
     "autoload-dev": {
         "psr-4": { "Tristanbes\\MyPoseoBundle\\Tests\\": "tests/" }
+    },
+    "config": {
+        "bin-dir": "bin"
     },
     "minimum-stability": "stable",
     "extra": {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tristanbes\MyPoseoBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
