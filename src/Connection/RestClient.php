@@ -26,22 +26,12 @@ use Tristanbes\MyPoseoBundle\Exception\ThrottleLimitException;
  */
 class RestClient
 {
-    /**
-     * Your API key.
-     *
-     * @var string
-     */
-    private $apiKey;
-    private $httpClient;
-    private $apiHost;
-    private $cache;
-
-    public function __construct(string $apiKey, string $apiHost, ?HttpClient $httpClient = null, ?CacheItemPoolInterface $cache = null)
-    {
-        $this->apiKey     = $apiKey;
-        $this->apiHost    = $apiHost;
-        $this->httpClient = $httpClient;
-        $this->cache      = $cache;
+    public function __construct(
+        private string $apiKey,
+        private string $apiHost,
+        private ?HttpClient $httpClient = null,
+        private ?CacheItemPoolInterface $cache = null
+    ) {
     }
 
     protected function getHttpClient(): HttpClient

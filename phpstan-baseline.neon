@@ -1,9 +1,34 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$id of class Symfony\\\\Component\\\\DependencyInjection\\\\Reference constructor expects string, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			message: "#^Method Tristanbes\\\\MyPoseoBundle\\\\Api\\\\Search\\:\\:getSearchEngineExtensions\\(\\) should return array\\<int, array\\{id\\: int, name\\: string\\}\\> but returns array\\.$#"
+			count: 1
+			path: src/Api/Search.php
+
+		-
+			message: "#^Method Tristanbes\\\\MyPoseoBundle\\\\Api\\\\Search\\:\\:getTownCode\\(\\) should return array\\<int, array\\{id\\: int, city_code\\: string, city_name\\: string, code_dep\\: string\\}\\> but returns array\\.$#"
+			count: 1
+			path: src/Api/Search.php
+
+		-
+			message: "#^Method Tristanbes\\\\MyPoseoBundle\\\\Api\\\\Search\\:\\:getUrlRankByKeyword\\(\\) should return array\\<int, array\\{url_positioned\\: string, position\\: string, page\\: string, type\\: string, serp\\: string, nbr_results\\: int, top\\: string, keyword\\: string, \\.\\.\\.\\}\\> but returns array\\.$#"
+			count: 1
+			path: src/Api/Search.php
+
+		-
+			message: "#^Parameter \\#1 \\$id of class Symfony\\\\Component\\\\DependencyInjection\\\\Reference constructor expects string, array\\|float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string\\|UnitEnum\\|true given\\.$#"
 			count: 2
 			path: src/CompilerPass/DynamicServiceCompilerPass.php
+
+		-
+			message: "#^Method Tristanbes\\\\MyPoseoBundle\\\\Connection\\\\RestClient\\:\\:send\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/Connection/RestClient.php
+
+		-
+			message: "#^Parameter \\#4 \\$body of method Http\\\\Message\\\\RequestFactory\\:\\:createRequest\\(\\) expects Psr\\\\Http\\\\Message\\\\StreamInterface\\|resource\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: src/Connection/RestClient.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"

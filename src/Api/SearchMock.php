@@ -10,20 +10,11 @@ declare(strict_types=1);
 
 namespace Tristanbes\MyPoseoBundle\Api;
 
-use Tristanbes\MyPoseoBundle\Connection\RestClient;
-
 /**
  * Class used when the application is in test environment
  */
 class SearchMock implements SearchInterface
 {
-    private $client;
-
-    public function __construct(RestClient $client)
-    {
-        $this->client = $client;
-    }
-
     public function getSearchEngineExtensions(string $searchEngine, ?int $ttl = null): array
     {
         $data             = [];

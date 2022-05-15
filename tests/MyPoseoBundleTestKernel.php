@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tristanbes\MyPoseoBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -8,7 +10,6 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use Symfony\Component\Routing\RouteCollectionBuilder;
 use Tristanbes\MyPoseoBundle\MyPoseoBundle;
 
 abstract class AbstractMyPoseoBundleTestKernel extends Kernel
@@ -52,18 +53,9 @@ abstract class AbstractMyPoseoBundleTestKernel extends Kernel
     }
 }
 
-if (AbstractMyPoseoBundleTestKernel::VERSION_ID >= 50100) { // @phpstan-ignore-line
-    class MyPoseoBundleTestKernel extends AbstractMyPoseoBundleTestKernel
+class MyPoseoBundleTestKernel extends AbstractMyPoseoBundleTestKernel
+{
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        protected function configureRoutes(RoutingConfigurator $routes): void
-        {
-        }
-    }
-} else { // @phpstan-ignore-line
-    class MyPoseoBundleTestKernel extends AbstractMyPoseoBundleTestKernel
-    {
-        protected function configureRoutes(RouteCollectionBuilder $routes): void
-        {
-        }
     }
 }
