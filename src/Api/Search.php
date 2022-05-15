@@ -17,11 +17,8 @@ use Tristanbes\MyPoseoBundle\Connection\RestClient;
  */
 class Search implements SearchInterface
 {
-    private $client;
-
-    public function __construct(RestClient $client)
+    public function __construct(private RestClient $client)
     {
-        $this->client = $client;
     }
 
     public function getSearchEngineExtensions(string $searchEngine, ?int $ttl = null): array

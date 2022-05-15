@@ -59,4 +59,3 @@ class MyPoseoBundleTestKernel extends AbstractMyPoseoBundleTestKernel
     {
     }
 }
-
